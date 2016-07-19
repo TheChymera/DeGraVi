@@ -19,10 +19,26 @@ def get_all_packages(overlay_path):
 			cpv_i = portage.pkgsplit(cpv)
 			if portage.pkgcmp(cpv_i, newest_cpv) >= 0:
 				newest_cpv = cpv_i
-		if "nilearn" in cpv:
-			print porttree.dbapi.aux_get(cpv, ["DEPEND"])
+		deps = porttree.dbapi.aux_get(cpv, ["DEPEND","RDEPEND","PDEPEND"])
+		deps = ' '.join(deps).split() # consolidate deps
+		deps = list(set(deps)) # de-duplicate
+		for ix, a in enumerate(deps):
+			#these are not real atoms, mark for deletion
+			if not "/" in a:
+				deps[ix] = None
+			#remove version indicators
+			if a[:2] == ">=" or a[:2] == "<=":
+				deps[ix] = a[2:]
+		deps  = filter(None, deps)
+		for ix, a in enumerate(deps):
+			for delimiter in ["[",":"]:
+				if delimiter in a:
+					deps[ix] = a.split(delimiter)[0]
+		for ix, a in enumerate(deps):
+			if portage.pkgsplit(a) != None:
+				deps[ix] = portage.pkgsplit(a)[0]
 		cpv_dependencies = porttree.dbapi.aux_get(cpv, ["DEPEND"])[0].split(" ")
-		packages[cpv] = cpv_dependencies
+		packages[cp] = deps
 
 	return packages
 
@@ -31,6 +47,6 @@ if __name__ == '__main__':
 	for i in packages:
 		if "nilearn" in i:
 			print i
-			print "DEPEND:	"
+			print "DEPEND:"
 			for a in packages[i]:
 				print a
