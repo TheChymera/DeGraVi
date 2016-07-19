@@ -7,7 +7,6 @@ def get_all_packages(overlay_path):
 	"""
 	packages = {}
 	porttree = portage.db[portage.root]['porttree']
-	vartree = portage.db[portage.root]['vartree']
 
 	if overlay_path not in porttree.dbapi.porttrees:
 		print('Overlay "{}" is not known to Portage.\n'.format(overlay_path) +
@@ -15,17 +14,23 @@ def get_all_packages(overlay_path):
 		return False
 
 	for cp in porttree.dbapi.cp_all(trees=[overlay_path]):
+		newest_cpv = portage.pkgsplit(cp+"-0")
 		for cpv in porttree.dbapi.cp_list(cp, mytree=[overlay_path]):
-			packages[cpv] = Package(cpv)
-		for cpv in vartree.dbapi.cp_list(cp):
-			# Insert only a new entry if not overriding an existing one.
-			packages.setdefault(cpv, Package(cpv))
+			cpv_i = portage.pkgsplit(cpv)
+			if portage.pkgcmp(cpv_i, newest_cpv) >= 0:
+				newest_cpv = cpv_i
+		if "nilearn" in cpv:
+			print porttree.dbapi.aux_get(cpv, ["DEPEND"])
+		cpv_dependencies = porttree.dbapi.aux_get(cpv, ["DEPEND"])[0].split(" ")
+		packages[cpv] = cpv_dependencies
 
 	return packages
 
 if __name__ == '__main__':
 	packages = get_all_packages('/usr/local/portage/sci')
-	# for i in packages:
-	# 	if "nilearn" in i:
-	# 		print i
-	# 		print ">>>", packages[i]
+	for i in packages:
+		if "nilearn" in i:
+			print i
+			print "DEPEND:	"
+			for a in packages[i]:
+				print a
