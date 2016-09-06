@@ -49,7 +49,6 @@ def get_all_packages(overlay_paths):
 		for ix, a in enumerate(deps):
 			if portage.pkgsplit(a) != None:
 				deps[ix] = portage.pkgsplit(a)[0]
-		cpv_dependencies = porttree.dbapi.aux_get(cpv, ["DEPEND"])[0].split(" ")
 		packages[cp] = deps
 
 
@@ -73,7 +72,7 @@ def get_all_packages(overlay_paths):
 
 	# pos=pygraphviz_layout(G,prog='neato',args='')
 	# pos=nx.spring_layout(G,dim=3,iterations=10000)
-	pos=nx.spring_layout(G,k=0.1,iterations=10000)
+	pos=nx.spring_layout(G,k=0.05,iterations=1000)
 	nx.draw(G, pos, **options)
 
 	plt.show()
