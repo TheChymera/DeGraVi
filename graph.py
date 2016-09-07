@@ -18,6 +18,8 @@ def get_all_packages(overlay_paths):
 			'Please set it. Learn how at https://wiki.gentoo.org/wiki/Overlay')
 			return False
 
+	g = gt.Graph()
+
 	for cp in porttree.dbapi.cp_all(trees=overlay_paths):
 		newest_cpv = cp+"-0_beta" #nothing should be earlier than this
 		for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_paths):
@@ -45,41 +47,18 @@ def get_all_packages(overlay_paths):
 				if deps[ix][-1:] in ["*"]:
 					deps[ix] = deps[ix][:-1]
 		deps  = list(filter(None, deps))
-
 		for ix, a in enumerate(deps):
 			if portage.pkgsplit(a) != None:
 				deps[ix] = portage.pkgsplit(a)[0]
 		packages[cp] = deps
 
+	return packages
 
-	G = nx.Graph(packages)
-
-	options = {
-		'with_labels': False,
-		'node_color': 'red',
-		'node_size': 5,
-		'linewidths': 0,
-		'width': 0.5,
-	}
-
-
-	plt.figure(figsize=(14,14), tight_layout=True)
-	plt.axis('equal')
-	# print(packages["sci-mathematics/yoricks"])
-	# nx.draw_shell(G, nlist=[range(0,10), range(10,1000)], **options)
-	# nx.draw(G, shell_layout(G, nlist=[range(0,10), range(10,2000)]), **options)
-	# nx.draw_spring(G, iterations=500000, **options)
-
-	# pos=pygraphviz_layout(G,prog='neato',args='')
-	# pos=nx.spring_layout(G,dim=3,iterations=10000)
-	pos=nx.spring_layout(G,k=0.1,iterations=10000)
-	nx.draw(G, pos, **options)
-
-	plt.show()
-
-	return G
+def gtG():
+	
 
 if __name__ == '__main__':
 	# packages = get_all_packages('/usr/portage')
 	packages = get_all_packages(['/usr/local/portage/sci'])
+	gtG()
 	# packages = get_all_packages(['/usr/local/portage/sci','/usr/portage'])
