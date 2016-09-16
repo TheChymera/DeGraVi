@@ -12,7 +12,12 @@ thisscriptspath = os.path.dirname(os.path.realpath(__file__))
 neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
 NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
 
-def repository_graph(overlay_paths, overlay_colors=[], highlight=[]):
+gentoo_purple = (0.329,0.282,0.478,1)
+gentoo_purple_light = (0.38,0.325,0.553,1)
+gentoo_purple_grey = (0.867,0.855,0.925,1)
+gentoo_green = (0.451,0.824,0.86,1)
+
+def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_color=(0.8,0,0.8,1)):
 	"""Returns all packages from a given overlay path.
 
 	"""
@@ -74,8 +79,8 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[]):
 		except KeyError:
 			v1 = g.add_vertex()
 			label[v1] = cp
-			if cp in NEUROGENTOO:
-				vcolor[v1] = [0.8,0,0.8,1]
+			if cp in highlight:
+				vcolor[v1] = highlight_color
 			else:
 				vcolor[v1] = [0.2,0.2,0.2,1]
 			vertices[cp] = g.vertex_index[v1]
@@ -88,8 +93,8 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[]):
 				if dep in all_cp:
 					v2 = g.add_vertex()
 					label[v2] = dep
-					if dep in NEUROGENTOO:
-						vcolor[v2] = [0.8,0,0.8,1]
+					if dep in highlight:
+						vcolor[v2] = highlight_color
 					else:
 						vcolor[v2] = [0.2,0.2,0.2,1]
 					vertices[dep] = g.vertex_index[v2]
@@ -160,7 +165,7 @@ def draw_degraph(g, plot_type="graph"):
 
 if __name__ == '__main__':
 	# packages = get_all_packages('/usr/portage')
-	g = repository_graph(['/usr/local/portage/sci'])
+	g = repository_graph(['/usr/local/portage/sci'], highlight=NEUROGENTOO)
 	draw_degraph(g)
 	# gt.graph_draw(g)
 	# packages = get_all_packages(['/usr/local/portage/sci','/usr/portage'])
