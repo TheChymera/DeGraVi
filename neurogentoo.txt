@@ -11,6 +11,7 @@ sci-biology/fsl
 sci-biology/dcmstack
 sci-biology/mne-python
 sci-biology/nistats
+sci-biology/nilearn
 sci-biology/psychopy
 sci-biology/pybrain
 sci-biology/pysurfer
