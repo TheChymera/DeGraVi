@@ -79,10 +79,6 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 		except KeyError:
 			v1 = g.add_vertex()
 			label[v1] = cp
-			if cp in highlight:
-				vcolor[v1] = highlight_color
-			else:
-				vcolor[v1] = [0.2,0.2,0.2,1]
 			vertices[cp] = g.vertex_index[v1]
 		else:
 			v1 = g.vertex(cp_index)
@@ -93,15 +89,18 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 				if dep in all_cp:
 					v2 = g.add_vertex()
 					label[v2] = dep
-					if dep in highlight:
-						vcolor[v2] = highlight_color
-					else:
-						vcolor[v2] = [0.2,0.2,0.2,1]
 					vertices[dep] = g.vertex_index[v2]
 					e = g.add_edge(v1, v2)
 			else:
 				v2 = g.vertex(dep_index)
 				e = g.add_edge(v1, v2)
+
+	#set vertex colors
+	for v in g.vertices():
+		if label[v] in highlight:
+			vcolor[v] = gentoo_purple
+		else:
+			vcolor[v] = gentoo_purple_grey
 
 	g = gt.GraphView(g,vfilt=lambda v: (v.out_degree() > 0) or (v.in_degree() > 0) )
 	g.purge_vertices()
