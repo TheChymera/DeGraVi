@@ -17,7 +17,7 @@ gentoo_purple_light = (0.38,0.325,0.553,1)
 gentoo_purple_grey = (0.867,0.855,0.925,1)
 gentoo_green = (0.451,0.824,0.86,1)
 
-def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_color=(0.8,0,0.8,1)):
+def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_color=(0.8,0,0.8,1), only_connected=True):
 	"""Returns all packages from a given overlay path.
 
 	"""
@@ -95,15 +95,18 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 				v2 = g.vertex(dep_index)
 				e = g.add_edge(v1, v2)
 
-	#set vertex colors
 	for v in g.vertices():
+		#set vertex colors
 		if label[v] in highlight:
 			vcolor[v] = gentoo_purple
 		else:
 			vcolor[v] = gentoo_purple_grey
 
-	g = gt.GraphView(g,vfilt=lambda v: (v.out_degree() > 0) or (v.in_degree() > 0) )
-	g.purge_vertices()
+	if only_connected:
+		g = gt.GraphView(g,vfilt=lambda v: (v.out_degree() > 0) or (v.in_degree() > 0) )
+		g.purge_vertices()
+	else:
+		g = gt.GraphView(g)
 
 	return g
 
@@ -132,6 +135,9 @@ def draw_degraph(g, plot_type="graph"):
 	# 	except ZeroDivisionError:
 	# 		text_rotation[v] = 0
 
+	vertex_number = g.num_vertices()
+	output_size = vertex_number*6
+
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
 				edge_control_points=cts,
@@ -142,12 +148,12 @@ def draw_degraph(g, plot_type="graph"):
 				vertex_text=g.vertex_properties['label'],
 				vertex_text_position=0,
 				vertex_text_rotation=g.vertex_properties['text_rotation'],
-				vertex_size=10,
+				vertex_size=12,
 				edge_start_marker="none",
 				edge_mid_marker="none",
 				edge_end_marker="none",
 				bg_color=[1,1,1,1],
-				output_size=[8000,8000],
+				output_size=[output_size,output_size],
 				output='/home/chymera/degra.png',
 				)
 	elif plot_type == "state":
