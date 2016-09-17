@@ -2,49 +2,44 @@ import math
 import os
 from copy import deepcopy
 
+import graph_tool.all as gt
 import portage
 import matplotlib.pyplot as plt
-import graph_tool.all as gt
+import numpy as np
+from matplotlib import cm
 from gentoolkit.package import Package
 
-#relative paths
-thisscriptspath = os.path.dirname(os.path.realpath(__file__))
-neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
-NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
+#gentoo color scheme
+GENTOO_PURPLE = (0.329,0.282,0.478,1)
+GENTOO_PURPLE_LIGHT = (0.38,0.325,0.553,1)
+GENTOO_PURPLE_LIGHT2 = (0.432,0.337,0.686,1)
+GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
+GENTOO_GREEN = (0.451,0.824,0.086,1)
 
-gentoo_purple = (0.329,0.282,0.478,1)
-gentoo_purple_light = (0.38,0.325,0.553,1)
-gentoo_purple_grey = (0.867,0.855,0.925,1)
-gentoo_green = (0.451,0.824,0.86,1)
-
-def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_color=(0.8,0,0.8,1), only_connected=True):
-	"""Returns all packages from a given overlay path.
-
-	"""
-	porttree = portage.db[portage.root]['porttree']
-
-	for overlay_path in overlay_paths:
-		if overlay_path not in porttree.dbapi.porttrees:
-			print('Overlay "{}" is not known to Portage.\n'.format(overlay_path) +
-			'Please set it. Learn how at https://wiki.gentoo.org/wiki/Overlay')
-			return False
-
-	g = gt.Graph()
+def populate_from_repository(g, overlay_path, porttree,
+	only_overlay=True,
+	overlay_color=GENTOO_PURPLE_LIGHT2,
+	overlay_text_color=GENTOO_PURPLE,
+	overlay_edge_color=GENTOO_PURPLE_LIGHT2,
+	extraneous_color=GENTOO_PURPLE_LIGHT,
+	extraneous_text_color=GENTOO_PURPLE,
+	extraneous_edge_color=GENTOO_PURPLE_LIGHT,
+	):
 
 	vertices = {}
-	#CREATE PROPERTIES
-	##label
-	label = g.new_vertex_property('string')
-	g.vertex_properties['label'] = label
-	##vertex_color
+	vlabel = g.new_vertex_property('string')
+	g.vertex_properties['vlabel'] = vlabel
 	vcolor = g.new_vertex_property('vector<double>')
 	g.vertex_properties['vcolor'] = vcolor
+	egradient = g.new_edge_property('vector<double>')
+	g.edge_properties['egradient'] = egradient
+	vtext_color = g.new_vertex_property('vector<double>')
+	g.vertex_properties['vtext_color'] = vtext_color
 
-
-	all_cp = porttree.dbapi.cp_all(trees=overlay_paths)
+	all_cp = porttree.dbapi.cp_all(trees=[overlay_path])
 	for cp in all_cp:
 		newest_cpv = cp+"-0_beta" #nothing should be earlier than this
-		for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_paths):
+		for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_path):
 			if portage.pkgcmp(portage.pkgsplit(cpv), portage.pkgsplit(newest_cpv)) >= 0:
 				newest_cpv = cpv
 		if newest_cpv != cp+"-0_beta":
@@ -78,7 +73,9 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 			cp_index = vertices[cp]
 		except KeyError:
 			v1 = g.add_vertex()
-			label[v1] = cp
+			vlabel[v1] = cp
+			vcolor[v1] = overlay_color
+			vtext_color[v1] = overlay_text_color
 			vertices[cp] = g.vertex_index[v1]
 		else:
 			v1 = g.vertex(cp_index)
@@ -88,19 +85,63 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 			except KeyError:
 				if dep in all_cp:
 					v2 = g.add_vertex()
-					label[v2] = dep
+					vlabel[v2] = dep
+					vcolor[v2] = overlay_color
+					vtext_color[v2] = overlay_text_color
 					vertices[dep] = g.vertex_index[v2]
 					e = g.add_edge(v1, v2)
+					egradient[e] = (1,)+overlay_edge_color
+				elif not only_overlay:
+					v2 = g.add_vertex()
+					vlabel[v2] = dep
+					vcolor[v2] = extraneous_color
+					vtext_color[v2] = extraneous_text_color
+					vertices[dep] = g.vertex_index[v2]
+					e = g.add_edge(v1, v2)
+					egradient[e] = (1,)+extraneous_edge_color
 			else:
 				v2 = g.vertex(dep_index)
 				e = g.add_edge(v1, v2)
+				egradient[e] = (1,)+overlay_edge_color
 
+	return g
+
+def dependency_graph(overlay_paths,
+	overlay_colors=[GENTOO_PURPLE],
+	overlay_text_colors=[GENTOO_PURPLE],
+	highlight=[],
+	highlight_color=GENTOO_GREEN,
+	highlight_text_color=GENTOO_GREEN,
+	only_connected=True,
+	only_overlay=True,
+	textcolor=False,
+	):
+	"""Returns all packages from a given overlay path.
+
+	"""
+
+	g = gt.Graph()
+
+	porttree = portage.db[portage.root]['porttree']
+	for overlay_path in overlay_paths:
+		if overlay_path not in porttree.dbapi.porttrees:
+			print('Overlay "{}" is not known to Portage.\n'.format(overlay_path) +
+			'Please set it. Learn how at https://wiki.gentoo.org/wiki/Overlay')
+			return False
+		g = populate_from_repository(g, overlay_path, porttree,
+			only_overlay=only_overlay
+			)
+
+
+	#set highlight colors
 	for v in g.vertices():
-		#set vertex colors
-		if label[v] in highlight:
-			vcolor[v] = gentoo_purple
-		else:
-			vcolor[v] = gentoo_purple_grey
+		if g.vp.vlabel[v] in highlight:
+			g.vp.vcolor[v] = highlight_color
+			g.vp.vtext_color[v] = highlight_text_color
+
+	for e in g.edges():
+		if g.vp.vlabel[e.source()] in highlight:
+			g.ep.egradient[e] = (1,)+highlight_text_color
 
 	if only_connected:
 		g = gt.GraphView(g,vfilt=lambda v: (v.out_degree() > 0) or (v.in_degree() > 0) )
@@ -109,68 +150,3 @@ def repository_graph(overlay_paths, overlay_colors=[], highlight=[], highlight_c
 		g = gt.GraphView(g)
 
 	return g
-
-def draw_degraph(g, plot_type="graph"):
-	state = gt.minimize_nested_blockmodel_dl(g, deg_corr=True)
-	t = gt.get_hierarchy_tree(state)[0]
-	tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices() - 1), weighted=True)
-	cts = gt.get_hierarchy_control_points(g, t, tpos)
-	pos = g.own_property(tpos)
-
-	text_rotation = g.new_vertex_property('double')
-	g.vertex_properties['text_rotation'] = text_rotation
-	for v in g.vertices():
-		if pos[v][0] >= 0:
-			try:
-				text_rotation[v] = math.atan(pos[v][1]/pos[v][0])
-			except ZeroDivisionError:
-				text_rotation[v] = 0
-		else:
-			text_rotation[v] = math.pi + math.atan(pos[v][1]/pos[v][0])
-
-	#more readable (up-side-up) labels:
-	# for v in g.vertices():
-	# 	try:
-	# 		text_rotation[v] = math.atan(pos[v][1]/pos[v][0])
-	# 	except ZeroDivisionError:
-	# 		text_rotation[v] = 0
-
-	vertex_number = g.num_vertices()
-	output_size = vertex_number*6
-
-	if plot_type == "graph":
-		gt.graph_draw(g, pos=pos,
-				edge_control_points=cts,
-				vertex_anchor=0,
-				vertex_color=g.vertex_properties['vcolor'],
-				vertex_fill_color=g.vertex_properties['vcolor'],
-				vertex_font_size=14,
-				vertex_text=g.vertex_properties['label'],
-				vertex_text_position=0,
-				vertex_text_rotation=g.vertex_properties['text_rotation'],
-				vertex_size=12,
-				edge_start_marker="none",
-				edge_mid_marker="none",
-				edge_end_marker="none",
-				bg_color=[1,1,1,1],
-				output_size=[output_size,output_size],
-				output='/home/chymera/degra.png',
-				)
-	elif plot_type == "state":
-		gt.draw_hierarchy(state,
-			vertex_text_position=1,
-			vertex_font_size=12,
-			vertex_text=g.vertex_properties['label'],
-			vertex_text_rotation=g.vertex_properties['text_rotation'],
-			vertex_anchor=0,
-			bg_color=[1,1,1,1],
-			output_size=[6000,6000],
-			output='/home/chymera/degra.png',
-			)
-
-if __name__ == '__main__':
-	# packages = get_all_packages('/usr/portage')
-	g = repository_graph(['/usr/local/portage/sci'], highlight=NEUROGENTOO)
-	draw_degraph(g)
-	# gt.graph_draw(g)
-	# packages = get_all_packages(['/usr/local/portage/sci','/usr/portage'])
