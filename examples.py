@@ -15,9 +15,13 @@ GENTOO_PURPLE_LIGHT2 = (0.432,0.337,0.686,1)
 GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
 GENTOO_GREEN = (0.451,0.824,0.086,1)
 
-def ex1():
+def neurogentoo_graph():
 	g = dependency_graph(['/usr/local/portage/neurogentoo'],
 		overlay_colors=[GENTOO_PURPLE_LIGHT],
+		overlay_text_colors=[GENTOO_PURPLE],
+		extraneous_colors=[GENTOO_PURPLE_GREY],
+		extraneous_text_colors=[GENTOO_PURPLE],
+		extraneous_edge_colors=[GENTOO_PURPLE_GREY],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,
 		textcolor=GENTOO_PURPLE,
@@ -26,6 +30,19 @@ def ex1():
 	draw_depgraph(g,
 	save_as="~/g.pdf"
 	)
+def neurogentoo_full_graph():
+	g = dependency_graph(['/usr/portage','/usr/local/portage/neurogentoo'],
+		overlay_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
+		overlay_text_colors=[GENTOO_PURPLE_LIGHT,GENTOO_PURPLE_LIGHT],
+		overlay_edge_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
+		highlight=NEUROGENTOO,
+		highlight_color=GENTOO_GREEN,
+		textcolor=GENTOO_PURPLE,
+		)
+	draw_depgraph(g,
+	save_as="~/g.svg"
+	)
 
 if __name__ == '__main__':
-	ex1()
+	neurogentoo_full_graph()
+	# neurogentoo_graph()
