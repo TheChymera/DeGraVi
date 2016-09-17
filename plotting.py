@@ -31,6 +31,8 @@ def draw_depgraph(g,
 
 	vertex_number = g.num_vertices()
 	output_size = vertex_number*6
+	if output_size >= 18000:
+		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
@@ -43,11 +45,12 @@ def draw_depgraph(g,
 				vertex_text_position=0.,
 				vertex_text_rotation=g.vertex_properties['vtext_rotation'],
 				vertex_text_color=g.vertex_properties['vtext_color'],
-				vertex_size=17,
+				vertex_size=16,
 				edge_start_marker="none",
 				edge_mid_marker="none",
 				edge_end_marker="none",
 				edge_gradient=g.edge_properties["egradient"],
+				eorder=g.edge_properties["eorder"],
 				bg_color=[1,1,1,1],
 				output_size=[output_size,output_size],
 				output=save_as,
@@ -60,6 +63,6 @@ def draw_depgraph(g,
 			vertex_text_rotation=g.vertex_properties['text_rotation'],
 			vertex_anchor=0,
 			bg_color=[1,1,1,1],
-			output_size=[6000,6000],
+			output_size=[output_size,output_size],
 			output=save_as,
 			)
