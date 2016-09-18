@@ -9,6 +9,8 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
+from utils import add_vertex_and_properties, get_cp_deps
+
 #gentoo color scheme
 GENTOO_PURPLE = (0.329,0.282,0.478,1)
 GENTOO_PURPLE_LIGHT = (0.38,0.325,0.553,1)
@@ -22,23 +24,13 @@ def populate_from_repository(g, overlay_path, porttree,
 	overlay_color=GENTOO_PURPLE_LIGHT2,
 	overlay_text_color=GENTOO_PURPLE,
 	overlay_edge_color=GENTOO_PURPLE_LIGHT2,
-	overlay_eorder=2,
+	overlay_edge_order=2,
 	extraneous_color=GENTOO_PURPLE_GREY,
 	extraneous_text_color=GENTOO_PURPLE,
 	extraneous_edge_color=GENTOO_PURPLE_GREY,
 	extraneous_eorder=1,
 	):
 
-	vlabel = g.new_vertex_property('string')
-	g.vertex_properties['vlabel'] = vlabel
-	vcolor = g.new_vertex_property('vector<double>')
-	g.vertex_properties['vcolor'] = vcolor
-	vtext_color = g.new_vertex_property('vector<double>')
-	g.vertex_properties['vtext_color'] = vtext_color
-	egradient = g.new_edge_property('vector<double>')
-	g.edge_properties['egradient'] = egradient
-	eorder = g.new_edge_property('double')
-	g.edge_properties['eorder'] = eorder
 
 	all_cp = porttree.dbapi.cp_all(trees=[overlay_path])
 	for cp in all_cp:
@@ -77,9 +69,9 @@ def populate_from_repository(g, overlay_path, porttree,
 			cp_index = vertices[cp]
 		except KeyError:
 			v1 = g.add_vertex()
-			vlabel[v1] = cp
-			vcolor[v1] = overlay_color
-			vtext_color[v1] = overlay_text_color
+			g.vp.vlabel[v1] = cp
+			g.vp.vcolor[v1] = overlay_color
+			g.vp.vtext_color[v1] = overlay_text_color
 			vertices[cp] = g.vertex_index[v1]
 		else:
 			v1 = g.vertex(cp_index)
@@ -89,27 +81,27 @@ def populate_from_repository(g, overlay_path, porttree,
 			except KeyError:
 				if dep in all_cp:
 					v2 = g.add_vertex()
-					vlabel[v2] = dep
-					vcolor[v2] = overlay_color
-					vtext_color[v2] = overlay_text_color
+					g.vp.vlabel[v2] = dep
+					g.vp.vcolor[v2] = overlay_color
+					g.vp.vtext_color[v2] = overlay_text_color
 					vertices[dep] = g.vertex_index[v2]
 					e = g.add_edge(v1, v2)
-					egradient[e] = (1,)+overlay_edge_color
-					eorder[e] = overlay_eorder
+					g.ep.egradient[e] = (1,)+overlay_edge_color
+					g.ep.eorder[e] = overlay_edge_order
 				elif not only_overlay:
 					v2 = g.add_vertex()
-					vlabel[v2] = dep
-					vcolor[v2] = extraneous_color
-					vtext_color[v2] = extraneous_text_color
+					g.vp.vlabel[v2] = dep
+					g.vp.vcolor[v2] = extraneous_color
+					g.vp.vtext_color[v2] = extraneous_text_color
 					vertices[dep] = g.vertex_index[v2]
 					e = g.add_edge(v1, v2)
-					egradient[e] = (1,)+extraneous_edge_color
-					eorder[e] = extraneous_eorder
+					g.ep.egradient[e] = (1,)+extraneous_edge_color
+					g.ep.eorder[e] = extraneous_eorder
 			else:
 				v2 = g.vertex(dep_index)
 				e = g.add_edge(v1, v2)
-				egradient[e] = (1,)+overlay_edge_color
-				eorder[e] = overlay_eorder
+				g.ep.egradient[e] = (1,)+overlay_edge_color
+				g.ep.eorder[e] = overlay_edge_order
 
 	return g, vertices
 
@@ -132,6 +124,16 @@ def dependency_graph(overlay_paths,
 	"""
 
 	g = gt.Graph()
+	vlabel = g.new_vertex_property('string')
+	g.vertex_properties['vlabel'] = vlabel
+	vcolor = g.new_vertex_property('vector<double>')
+	g.vertex_properties['vcolor'] = vcolor
+	vtext_color = g.new_vertex_property('vector<double>')
+	g.vertex_properties['vtext_color'] = vtext_color
+	egradient = g.new_edge_property('vector<double>')
+	g.edge_properties['egradient'] = egradient
+	eorder = g.new_edge_property('double')
+	g.edge_properties['eorder'] = eorder
 
 	porttree = portage.db[portage.root]['porttree']
 	vertices={}
@@ -161,7 +163,7 @@ def dependency_graph(overlay_paths,
 			overlay_color=overlay_colors[ix],
 			overlay_text_color=overlay_text_colors[ix],
 			overlay_edge_color=overlay_edge_colors[ix],
-			overlay_eorder=ix+2,
+			overlay_edge_order=ix+2,
 			extraneous_color=ec,
 			extraneous_text_color=etc,
 			extraneous_edge_color=eec,
@@ -186,3 +188,120 @@ def dependency_graph(overlay_paths,
 		g = gt.GraphView(g)
 
 	return g
+
+def tree_graph(base_overlays, seed_set,
+	highlight_overlays=[],
+	seed_color=GENTOO_GREEN,
+	seed_text_color=GENTOO_GREEN,
+	seed_edge_color=GENTOO_GREEN,
+	highlight_color=GENTOO_PURPLE_LIGHT2,
+	highlight_text_color=GENTOO_PURPLE,
+	highlight_edge_color=GENTOO_PURPLE_LIGHT2,
+	base_color=GENTOO_PURPLE_LIGHT2,
+	base_text_color=GENTOO_PURPLE,
+	base_edge_color=GENTOO_PURPLE_LIGHT2,
+	):
+
+	all_overlays = base_overlays + highlight_overlays
+
+	g = gt.Graph()
+	vlabel = g.new_vertex_property('string')
+	g.vertex_properties['vlabel'] = vlabel
+	vcolor = g.new_vertex_property('vector<double>')
+	g.vertex_properties['vcolor'] = vcolor
+	vtext_color = g.new_vertex_property('vector<double>')
+	g.vertex_properties['vtext_color'] = vtext_color
+	egradient = g.new_edge_property('vector<double>')
+	g.edge_properties['egradient'] = egradient
+	eorder = g.new_edge_property('double')
+	g.edge_properties['eorder'] = eorder
+
+	porttree = portage.db[portage.root]['porttree']
+	vertices={}
+	dep_dict={}
+
+	highlight_overlay_cp = porttree.dbapi.cp_all(trees=highlight_overlays)
+	all_cp = porttree.dbapi.cp_all(trees=all_overlays)
+	for cp in all_cp:
+		deps = get_cp_deps(cp, all_overlays, porttree)
+		if deps == False:
+			pass
+		else:
+			dep_dict[cp] = deps
+
+	for seed_cp in seed_set:
+		try:
+			v1_index = vertices[seed_cp]
+		except KeyError:
+			v1 = g.add_vertex()
+			g.vp.vlabel[v1] = seed_cp
+			g.vp.vcolor[v1] = seed_color
+			g.vp.vtext_color[v1] = seed_text_color
+			vertices[cp] = g.vertex_index[v1]
+		else:
+			v1 = g.vertex(v1_index)
+		for dep in dep_dict[seed_cp]:
+			try:
+				v2_index = vertices[dep]
+			except KeyError:
+				v2 = g.add_vertex()
+				g.vp.vlabel[v2] = seed_cp
+				g.vp.vcolor[v2] = base_color
+				g.vp.vtext_color[v2] = base_text_color
+				vertices[dep] = g.vertex_index[v2]
+				e = g.add_edge(v1, v2)
+				g.ep.egradient[e] = (1,)+base_edge_color
+				g.ep.eorder[e] = 1
+			else:
+				v2 = g.vertex(v2_index)
+				e = g.add_edge(v1, v2)
+				g.ep.egradient[e] = (1,)+base_edge_color
+				g.ep.eorder[e] = 1
+
+		#Populate graph
+		# try:
+		# 	cp_index = vertices[cp]
+		# except KeyError:
+		# 	v1 = g.add_vertex()
+		# 	g.vp.vlabel[v1] = cp
+		# 	g.vp.vcolor[v1] = overlay_color
+		# 	g.vp.vtext_color[v1] = overlay_text_color
+		# 	vertices[cp] = g.vertex_index[v1]
+		# else:
+		# 	v1 = g.vertex(cp_index)
+		# for dep in deps:
+		# 	try:
+		# 		dep_index = vertices[dep]
+		# 	except KeyError:
+		# 		if dep in all_cp:
+		# 			v2 = g.add_vertex()
+		# 			g.vp.vlabel[v2] = dep
+		# 			g.vp.vcolor[v2] = overlay_color
+		# 			g.vp.vtext_color[v2] = overlay_text_color
+		# 			vertices[dep] = g.vertex_index[v2]
+		# 			e = g.add_edge(v1, v2)
+		# 			g.ep.egradient[e] = (1,)+overlay_edge_color
+		# 			g.ep.eorder[e] = overlay_edge_order
+		# 		elif not only_overlay:
+		# 			v2 = g.add_vertex()
+		# 			g.vp.vlabel[v2] = dep
+		# 			g.vp.vcolor[v2] = extraneous_color
+		# 			g.vp.vtext_color[v2] = extraneous_text_color
+		# 			vertices[dep] = g.vertex_index[v2]
+		# 			e = g.add_edge(v1, v2)
+		# 			g.ep.egradient[e] = (1,)+extraneous_edge_color
+		# 			g.ep.eorder[e] = extraneous_eorder
+		# 	else:
+		# 		v2 = g.vertex(dep_index)
+		# 		e = g.add_edge(v1, v2)
+		# 		g.ep.egradient[e] = (1,)+overlay_edge_color
+		# 		g.ep.eorder[e] = overlay_edge_order
+
+if __name__ == '__main__':
+	import os
+	#relative paths
+	thisscriptspath = os.path.dirname(os.path.realpath(__file__))
+	neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
+	NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
+
+	tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"])
