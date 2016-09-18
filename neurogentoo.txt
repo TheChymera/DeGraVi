@@ -19,6 +19,7 @@ sci-biology/psychopy
 sci-biology/pybrain
 sci-biology/pysurfer
 sci-biology/spm
+sci-libs/itk
 sci-libs/nibabel
 sci-libs/nipype
 sci-libs/nipy
