@@ -14,6 +14,7 @@ sci-biology/dcmstack
 sci-biology/mne-python
 sci-biology/nilearn
 sci-biology/nistats
+sci-biology/nitime
 sci-biology/nireg
 sci-biology/psychopy
 sci-biology/pybrain
