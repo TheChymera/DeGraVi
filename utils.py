@@ -42,7 +42,7 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlig
 		try:
 			_ = vertices[seed_cp]
 		except KeyError:
-			vertices, v1 = tree_add_vertex_and_properties(g, seed_cp, vertices, v1, seed_set=seed_set, highlight_overlay_cp=highlight_overlay_cp, all_cp=all_cp,
+			vertices, v1 = tree_add_vertex_and_properties(g, seed_cp, vertices, v1, top_set=seed_set, second_set=highlight_overlay_cp, third_set=all_cp,
 			**kwargs)
 			for dep in dep_dict[seed_cp]:
 				vertices, _ = tree_iterator(g, dep, vertices, dep_dict, v1, seed_set=seed_set, highlight_overlay_cp=highlight_overlay_cp, all_cp=all_cp,
@@ -53,24 +53,24 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlig
 
 def tree_add_vertex_and_properties(g, cp, vertices,
 	v1=False,
-	seed_set=[],
-	highlight_overlay_cp=[],
-	all_cp=[],
+	top_set=[],
+	second_set=[],
+	third_set=[],
 	seed_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,3],
 	highlight_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,2],
 	base_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,1],
 	):
-	if cp in seed_set:
+	if cp in top_set:
 		vcolor = seed_property_values[0]
 		vtext_color = seed_property_values[1]
 		ecolor = seed_property_values[2]
 		eorder = seed_property_values[3]
-	elif cp in highlight_overlay_cp:
+	elif cp in second_set:
 		vcolor = highlight_property_values[0]
 		vtext_color = highlight_property_values[1]
 		ecolor = highlight_property_values[2]
 		eorder = highlight_property_values[3]
-	elif cp in all_cp:
+	elif cp in third_set:
 		vcolor = base_property_values[0]
 		vtext_color = base_property_values[1]
 		ecolor = base_property_values[2]

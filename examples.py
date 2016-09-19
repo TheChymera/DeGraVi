@@ -27,7 +27,7 @@ def neurogentoo_graph():
 def neurogentoo_full_graph():
 	g = dependency_graph(['/usr/portage','/usr/local/portage/neurogentoo'],
 		overlay_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
-		overlay_text_colors=[GENTOO_PURPLE_LIGHT,GENTOO_PURPLE_LIGHT],
+		overlay_text_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE],
 		overlay_edge_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,

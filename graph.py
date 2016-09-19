@@ -22,7 +22,7 @@ def populate_from_repository(g, overlay_path, porttree,
 	extraneous_color=GENTOO_PURPLE_GREY,
 	extraneous_text_color=GENTOO_PURPLE,
 	extraneous_edge_color=GENTOO_PURPLE_GREY,
-	extraneous_eorder=1,
+	extraneous_edge_order=1,
 	):
 
 
@@ -71,10 +71,10 @@ def populate_from_repository(g, overlay_path, porttree,
 			v1 = g.vertex(cp_index)
 		for dep in deps:
 			vertices, _ = tree_add_vertex_and_properties(g, dep, vertices, v1,
-			seed_set=all_cp,
-			highlight_overlay_cp=all_cp+deps,
-			seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,2],
-			highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,1],
+			top_set=all_cp,
+			second_set=all_cp+deps,
+			seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order],
+			highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order],
 			)
 
 	return g, vertices
@@ -141,7 +141,7 @@ def dependency_graph(overlay_paths,
 			extraneous_color=ec,
 			extraneous_text_color=etc,
 			extraneous_edge_color=eec,
-			extraneous_eorder=ix+1,
+			extraneous_edge_order=ix+1,
 			)
 
 	#set highlight colors
