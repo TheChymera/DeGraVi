@@ -2,6 +2,7 @@ dev-python/future
 dev-python/matrix2latex
 dev-python/prov
 dev-python/pydotplus
+dev-python/pymvpa
 dev-vcs/datalad
 dev-tex/pythontex
 media-libs/avbin-bin
