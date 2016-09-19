@@ -10,6 +10,34 @@ GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
 GENTOO_GREEN = (0.451,0.824,0.086,1)
 
 def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlight_overlay_cp=[], all_cp=[], **kwargs):
+	"""Walk dependency graph given by `dep_dict` starting with `seed_cp`. Interrupt walk when reaching an already walked package.
+
+	Parameters
+	----------
+	g : graph_tool.Graph() instance
+	The graph to which vertices and edges will be added. It needs to have vlabel, vcolor, vtext_color, egradient, and eorder properties. See definitiona examples at the beginning of functions calling this function.
+
+	seed_cp : str
+	Package name from which to start graph.
+
+	dep_dict : dict
+	Dictionary containing entire dependency graph.
+
+	v1 : graph_tool Vertex instance , optional
+	Vertex to connect to the next generated vertex.
+
+	seed_set : list , optional
+	Set of all seed package names (in category/package format). This is mainly relevant for coloring.
+
+	highlight_overlay_cp : list , optional
+	Set of all package names (in category/package format) from overlays to be highlighted. This is mainly relevant for coloring.
+
+	all_cp : list , optional
+	Set of all package names (in category/package format) all overlays. This is mainly relevant for coloring.
+
+	**kwargs : passed to tree_add_vertex_and_properties()
+	"""
+
 	if seed_cp in seed_set+all_cp:
 		try:
 			_ = vertices[seed_cp]

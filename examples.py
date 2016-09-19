@@ -34,7 +34,7 @@ def neurogentoo_full_graph():
 		textcolor=GENTOO_PURPLE,
 		)
 	draw_depgraph(g,
-	save_as="~/g.svg"
+	save_as="~/lg.pdf"
 	)
 
 def dep_tree():
@@ -51,6 +51,6 @@ def dep_tree():
 		)
 
 if __name__ == '__main__':
-	neurogentoo_graph()
-	# neurogentoo_full_graph()
+	# neurogentoo_graph()
+	neurogentoo_full_graph()
 	# dep_tree()
