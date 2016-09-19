@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
-from utils import add_vertex_and_properties, get_cp_deps
+from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator, cp_tree_iterator
 
 #gentoo color scheme
 GENTOO_PURPLE = (0.329,0.282,0.478,1)
@@ -230,78 +230,13 @@ def tree_graph(base_overlays, seed_set,
 			dep_dict[cp] = deps
 
 	for seed_cp in seed_set:
-		try:
-			v1_index = vertices[seed_cp]
-		except KeyError:
-			v1 = g.add_vertex()
-			g.vp.vlabel[v1] = seed_cp
-			g.vp.vcolor[v1] = seed_color
-			g.vp.vtext_color[v1] = seed_text_color
-			vertices[cp] = g.vertex_index[v1]
-		else:
-			v1 = g.vertex(v1_index)
-		for dep in dep_dict[seed_cp]:
-			try:
-				v2_index = vertices[dep]
-			except KeyError:
-				v2 = g.add_vertex()
-				g.vp.vlabel[v2] = seed_cp
-				g.vp.vcolor[v2] = base_color
-				g.vp.vtext_color[v2] = base_text_color
-				vertices[dep] = g.vertex_index[v2]
-				e = g.add_edge(v1, v2)
-				g.ep.egradient[e] = (1,)+base_edge_color
-				g.ep.eorder[e] = 1
-			else:
-				v2 = g.vertex(v2_index)
-				e = g.add_edge(v1, v2)
-				g.ep.egradient[e] = (1,)+base_edge_color
-				g.ep.eorder[e] = 1
+		vertices, _ = tree_iterator(g, seed_cp, vertices, dep_dict,
+			seed_set=seed_set,
+			highlight_overlay_cp=highlight_overlay_cp,
+			all_cp=all_cp,
+			seed_property_values=[seed_color, seed_text_color, seed_edge_color, 3],
+			highlight_property_values=[highlight_color, highlight_text_color, highlight_edge_color,2],
+			base_property_values=[base_color, base_text_color, base_edge_color, 1],
+			)
 
-		#Populate graph
-		# try:
-		# 	cp_index = vertices[cp]
-		# except KeyError:
-		# 	v1 = g.add_vertex()
-		# 	g.vp.vlabel[v1] = cp
-		# 	g.vp.vcolor[v1] = overlay_color
-		# 	g.vp.vtext_color[v1] = overlay_text_color
-		# 	vertices[cp] = g.vertex_index[v1]
-		# else:
-		# 	v1 = g.vertex(cp_index)
-		# for dep in deps:
-		# 	try:
-		# 		dep_index = vertices[dep]
-		# 	except KeyError:
-		# 		if dep in all_cp:
-		# 			v2 = g.add_vertex()
-		# 			g.vp.vlabel[v2] = dep
-		# 			g.vp.vcolor[v2] = overlay_color
-		# 			g.vp.vtext_color[v2] = overlay_text_color
-		# 			vertices[dep] = g.vertex_index[v2]
-		# 			e = g.add_edge(v1, v2)
-		# 			g.ep.egradient[e] = (1,)+overlay_edge_color
-		# 			g.ep.eorder[e] = overlay_edge_order
-		# 		elif not only_overlay:
-		# 			v2 = g.add_vertex()
-		# 			g.vp.vlabel[v2] = dep
-		# 			g.vp.vcolor[v2] = extraneous_color
-		# 			g.vp.vtext_color[v2] = extraneous_text_color
-		# 			vertices[dep] = g.vertex_index[v2]
-		# 			e = g.add_edge(v1, v2)
-		# 			g.ep.egradient[e] = (1,)+extraneous_edge_color
-		# 			g.ep.eorder[e] = extraneous_eorder
-		# 	else:
-		# 		v2 = g.vertex(dep_index)
-		# 		e = g.add_edge(v1, v2)
-		# 		g.ep.egradient[e] = (1,)+overlay_edge_color
-		# 		g.ep.eorder[e] = overlay_edge_order
-
-if __name__ == '__main__':
-	import os
-	#relative paths
-	thisscriptspath = os.path.dirname(os.path.realpath(__file__))
-	neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
-	NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
-
-	tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"])
+	print(g.num_vertices())

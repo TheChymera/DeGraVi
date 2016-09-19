@@ -1,6 +1,6 @@
 import os
 
-from graph import dependency_graph
+from graph import dependency_graph, tree_graph
 from plotting import draw_depgraph
 
 #relative paths
@@ -43,6 +43,20 @@ def neurogentoo_full_graph():
 	save_as="~/g.svg"
 	)
 
+def dep_tree():
+	tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
+		seed_color=GENTOO_GREEN,
+		seed_text_color=GENTOO_GREEN,
+		seed_edge_color=GENTOO_GREEN,
+		highlight_color=GENTOO_PURPLE_LIGHT2,
+		highlight_text_color=GENTOO_PURPLE,
+		highlight_edge_color=GENTOO_PURPLE_LIGHT2,
+		base_color=GENTOO_PURPLE_LIGHT2,
+		base_text_color=GENTOO_PURPLE,
+		base_edge_color=GENTOO_PURPLE_LIGHT2,
+		)
+
 if __name__ == '__main__':
-	neurogentoo_full_graph()
 	# neurogentoo_graph()
+	# neurogentoo_full_graph()
+	dep_tree()
