@@ -70,32 +70,12 @@ def populate_from_repository(g, overlay_path, porttree,
 		else:
 			v1 = g.vertex(cp_index)
 		for dep in deps:
-			try:
-				dep_index = vertices[dep]
-			except KeyError:
-				if dep in all_cp:
-					v2 = g.add_vertex()
-					g.vp.vlabel[v2] = dep
-					g.vp.vcolor[v2] = overlay_color
-					g.vp.vtext_color[v2] = overlay_text_color
-					vertices[dep] = g.vertex_index[v2]
-					e = g.add_edge(v1, v2)
-					g.ep.egradient[e] = (1,)+overlay_edge_color
-					g.ep.eorder[e] = overlay_edge_order
-				elif not only_overlay:
-					v2 = g.add_vertex()
-					g.vp.vlabel[v2] = dep
-					g.vp.vcolor[v2] = extraneous_color
-					g.vp.vtext_color[v2] = extraneous_text_color
-					vertices[dep] = g.vertex_index[v2]
-					e = g.add_edge(v1, v2)
-					g.ep.egradient[e] = (1,)+extraneous_edge_color
-					g.ep.eorder[e] = extraneous_eorder
-			else:
-				v2 = g.vertex(dep_index)
-				e = g.add_edge(v1, v2)
-				g.ep.egradient[e] = (1,)+overlay_edge_color
-				g.ep.eorder[e] = overlay_edge_order
+			vertices, _ = tree_add_vertex_and_properties(g, dep, vertices, v1,
+			seed_set=all_cp,
+			highlight_overlay_cp=all_cp+deps,
+			seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,2],
+			highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,1],
+			)
 
 	return g, vertices
 
@@ -232,5 +212,3 @@ def tree_graph(base_overlays, seed_set,
 			highlight_property_values=[highlight_color, highlight_text_color, highlight_edge_color,2],
 			base_property_values=[base_color, base_text_color, base_edge_color, 1],
 			)
-
-	print(g.num_vertices())

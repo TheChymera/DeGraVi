@@ -14,8 +14,8 @@ def neurogentoo_graph():
 		overlay_colors=[GENTOO_PURPLE_LIGHT],
 		overlay_text_colors=[GENTOO_PURPLE],
 		extraneous_colors=[GENTOO_PURPLE_GREY],
-		extraneous_text_colors=[GENTOO_PURPLE],
-		extraneous_edge_colors=[GENTOO_PURPLE_GREY],
+		extraneous_text_colors=[GENTOO_PURPLE_GREY],
+		extraneous_edge_colors=[GENTOO_PURPLE],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,
 		textcolor=GENTOO_PURPLE,
@@ -51,6 +51,6 @@ def dep_tree():
 		)
 
 if __name__ == '__main__':
-	# neurogentoo_graph()
+	neurogentoo_graph()
 	# neurogentoo_full_graph()
-	dep_tree()
+	# dep_tree()

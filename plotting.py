@@ -34,6 +34,8 @@ def draw_depgraph(g,
 	if output_size >= 18000:
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 
+	print(" ".join(["Plotting dependency graph containing",str(vertex_number),"packages."]))
+
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
 				edge_control_points=cts,
