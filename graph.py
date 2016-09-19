@@ -9,14 +9,8 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
-from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator, cp_tree_iterator
-
-#gentoo color scheme
-GENTOO_PURPLE = (0.329,0.282,0.478,1)
-GENTOO_PURPLE_LIGHT = (0.38,0.325,0.553,1)
-GENTOO_PURPLE_LIGHT2 = (0.432,0.337,0.686,1)
-GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
-GENTOO_GREEN = (0.451,0.824,0.086,1)
+from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator
+from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 def populate_from_repository(g, overlay_path, porttree,
 	vertices={},

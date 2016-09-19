@@ -2,18 +2,12 @@ import os
 
 from graph import dependency_graph, tree_graph
 from plotting import draw_depgraph
+from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 #relative paths
 thisscriptspath = os.path.dirname(os.path.realpath(__file__))
 neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
 NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
-
-#gentoo color scheme
-GENTOO_PURPLE = (0.329,0.282,0.478,1)
-GENTOO_PURPLE_LIGHT = (0.38,0.325,0.553,1)
-GENTOO_PURPLE_LIGHT2 = (0.432,0.337,0.686,1)
-GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
-GENTOO_GREEN = (0.451,0.824,0.086,1)
 
 def neurogentoo_graph():
 	g = dependency_graph(['/usr/local/portage/neurogentoo'],
