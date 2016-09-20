@@ -3,7 +3,7 @@ import os
 
 import graph_tool.all as gt
 
-def draw_depgraph(g,
+def circular_depgraph(g,
 	plot_type="graph",
 	save_as="~/depgraph.png",
 	):
@@ -30,11 +30,12 @@ def draw_depgraph(g,
 			vtext_rotation[v] = math.pi + math.atan(pos[v][1]/pos[v][0])
 
 	vertex_number = g.num_vertices()
-	output_size = vertex_number*6
+	output_size = vertex_number*5+1800
+	# output_size = vertex_number*6*(10000/vertex_number)**(1/16)
 	if output_size >= 18000:
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 
-	print(" ".join(["Plotting dependency graph containing",str(vertex_number),"packages."]))
+	print("Plotting dependency graph containing {0} packages, at a resolution of {1} pixels by {1} pixels".format(vertex_number, output_size))
 
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
