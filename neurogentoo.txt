@@ -2,6 +2,7 @@ dev-python/future
 dev-python/matrix2latex
 dev-python/prov
 dev-python/pydotplus
+dev-python/pymvpa
 dev-vcs/datalad
 dev-tex/pythontex
 media-libs/avbin-bin
@@ -14,6 +15,7 @@ sci-biology/dcmstack
 sci-biology/mne-python
 sci-biology/nilearn
 sci-biology/nistats
+sci-biology/nitime
 sci-biology/nireg
 sci-biology/psychopy
 sci-biology/pybrain
