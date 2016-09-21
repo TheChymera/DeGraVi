@@ -1,7 +1,7 @@
 import os
 
 from graph import dependency_graph, tree_graph
-from plotting import draw_depgraph
+from plotting import circular_depgraph
 from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 #relative paths
@@ -21,8 +21,8 @@ def neurogentoo_graph():
 		textcolor=GENTOO_PURPLE,
 		only_overlay=False,
 		)
-	draw_depgraph(g,
-	save_as="~/g.pdf"
+	circular_depgraph(g,
+	save_as="~/ng.pdf"
 	)
 def neurogentoo_full_graph():
 	g = dependency_graph(['/usr/portage','/usr/local/portage/neurogentoo'],
@@ -33,12 +33,12 @@ def neurogentoo_full_graph():
 		highlight_color=GENTOO_GREEN,
 		textcolor=GENTOO_PURPLE,
 		)
-	draw_depgraph(g,
+	circular_depgraph(g,
 	save_as="~/lg.pdf"
 	)
 
 def dep_tree():
-	tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
+	g = tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
 		seed_color=GENTOO_GREEN,
 		seed_text_color=GENTOO_GREEN,
 		seed_edge_color=GENTOO_GREEN,
@@ -49,8 +49,11 @@ def dep_tree():
 		base_text_color=GENTOO_PURPLE,
 		base_edge_color=GENTOO_PURPLE_LIGHT2,
 		)
+	circular_depgraph(g,
+	save_as="~/tg.pdf"
+	)
 
 if __name__ == '__main__':
-	# neurogentoo_graph()
+	neurogentoo_graph()
 	neurogentoo_full_graph()
-	# dep_tree()
+	dep_tree()

@@ -1,6 +1,8 @@
 import math
 import os
 
+import matplotlib.pyplot as plt
+
 import graph_tool.all as gt
 
 def circular_depgraph(g,
@@ -30,12 +32,14 @@ def circular_depgraph(g,
 			vtext_rotation[v] = math.pi + math.atan(pos[v][1]/pos[v][0])
 
 	vertex_number = g.num_vertices()
-	output_size = vertex_number*5+1800
+	view_zoom = vertex_number**(1/22)-0.4
+	output_size = vertex_number*6+50
 	# output_size = vertex_number*6*(10000/vertex_number)**(1/16)
 	if output_size >= 18000:
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 
 	print("Plotting dependency graph containing {0} packages, at a resolution of {1} pixels by {1} pixels".format(vertex_number, output_size))
+
 
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
@@ -45,7 +49,7 @@ def circular_depgraph(g,
 				vertex_fill_color=g.vertex_properties['vcolor'],
 				vertex_font_size=14,
 				vertex_text=g.vertex_properties['vlabel'],
-				vertex_text_position=0.,
+				vertex_text_position=6.2,
 				vertex_text_rotation=g.vertex_properties['vtext_rotation'],
 				vertex_text_color=g.vertex_properties['vtext_color'],
 				vertex_size=16,
@@ -57,6 +61,7 @@ def circular_depgraph(g,
 				bg_color=[1,1,1,1],
 				output_size=[output_size,output_size],
 				output=save_as,
+				fit_view=view_zoom,
 				)
 	elif plot_type == "state":
 		gt.draw_hierarchy(state,

@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
-from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator
+from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator, add_vertex_and_properties
 from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 def populate_from_repository(g, overlay_path, porttree,
@@ -70,12 +70,22 @@ def populate_from_repository(g, overlay_path, porttree,
 		else:
 			v1 = g.vertex(cp_index)
 		for dep in deps:
+			if only_overlay:
+				if dep in all_cp or dep in vertices:
+					vertices, _ = add_vertex_and_properties(g, dep, vertices, v1,
+						vcolor=overlay_color,
+						vtext_color=overlay_text_color,
+						ecolor=overlay_edge_color,
+						eorder=overlay_edge_order,
+						)
+				else:
+					break
 			vertices, _ = tree_add_vertex_and_properties(g, dep, vertices, v1,
-			top_set=all_cp,
-			second_set=all_cp+deps,
-			seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order],
-			highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order],
-			)
+				top_set=all_cp,
+				second_set=all_cp+deps,
+				seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order],
+				highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order],
+				)
 
 	return g, vertices
 
@@ -212,3 +222,4 @@ def tree_graph(base_overlays, seed_set,
 			highlight_property_values=[highlight_color, highlight_text_color, highlight_edge_color,2],
 			base_property_values=[base_color, base_text_color, base_edge_color, 1],
 			)
+	return g
