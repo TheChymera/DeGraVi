@@ -55,5 +55,5 @@ def dep_tree():
 
 if __name__ == '__main__':
 	neurogentoo_graph()
-	neurogentoo_full_graph()
+	# neurogentoo_full_graph()
 	dep_tree()

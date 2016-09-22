@@ -2,6 +2,7 @@ import math
 import os
 
 import matplotlib.pyplot as plt
+from matplotlib import transforms
 
 import graph_tool.all as gt
 
@@ -31,15 +32,14 @@ def circular_depgraph(g,
 		else:
 			vtext_rotation[v] = math.pi + math.atan(pos[v][1]/pos[v][0])
 
+	#here we do black magic to get proper output size (controls vertex spacing) and scaling
 	vertex_number = g.num_vertices()
-	view_zoom = vertex_number**(1/22)-0.4
+	view_zoom = (vertex_number*36.0485)**(-10.068/vertex_number)+0.017037
 	output_size = vertex_number*6+50
-	# output_size = vertex_number*6*(10000/vertex_number)**(1/16)
 	if output_size >= 18000:
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 
 	print("Plotting dependency graph containing {0} packages, at a resolution of {1} pixels by {1} pixels".format(vertex_number, output_size))
-
 
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
