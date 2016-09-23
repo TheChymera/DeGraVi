@@ -1,5 +1,8 @@
 import os
 
+import matplotlib
+matplotlib.use('cairo')
+
 from graph import dependency_graph, tree_graph
 from plotting import circular_depgraph
 from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
@@ -54,6 +57,6 @@ def dep_tree():
 	)
 
 if __name__ == '__main__':
-	neurogentoo_graph()
+	# neurogentoo_graph()
 	# neurogentoo_full_graph()
 	dep_tree()
