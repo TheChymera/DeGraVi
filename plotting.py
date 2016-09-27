@@ -45,11 +45,11 @@ def circular_depgraph(g,
 
 	# fig = plt.figure()
 	fig = plt.figure(figsize=(output_size/dpi, output_size/dpi), dpi=dpi)
+	fig.text(0.8,0.8,"Science", ha="center", va="bottom", size=vertex_number/47,color="blue")
 	# fig.suptitle('NeuroGentooScience', fontsize=vertex_number/47, fontweight='bold')
 	# fig.text(0.6, 0.6, "Neuro", ha="center", va="bottom", size=title_size,color="red")
 	# fig.text(0.6+5*character_offset, 0.6, "Gentoo", ha="center", va="bottom", size=title_size)
 	# fig.text(0.6+11*character_offset,0.6,"Science", ha="center", va="bottom", size=title_size,color="blue")
-	fig.text(0.8,0.8,"Science", ha="center", va="bottom", size=vertex_number/47,color="blue")
 
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
