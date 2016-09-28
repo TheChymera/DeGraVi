@@ -5,7 +5,7 @@ matplotlib.use('cairo')
 
 from graph import dependency_graph, tree_graph
 from plotting import circular_depgraph
-from utils import GENTOO_PURPLE,
+from utils import (GENTOO_PURPLE,
 	GENTOO_PURPLE_LIGHT,
 	GENTOO_PURPLE_LIGHT2,
 	GENTOO_PURPLE_LIGHT2_A075,
@@ -13,7 +13,7 @@ from utils import GENTOO_PURPLE,
 	GENTOO_PURPLE_GREY_A075,
 	GENTOO_GREEN,
 	GENTOO_GREEN_A075,
-
+	)
 
 #relative paths
 thisscriptspath = os.path.dirname(os.path.realpath(__file__))
