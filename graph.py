@@ -222,4 +222,5 @@ def tree_graph(base_overlays, seed_set,
 			highlight_property_values=[highlight_color, highlight_text_color, highlight_edge_color,2],
 			base_property_values=[base_color, base_text_color, base_edge_color, 1],
 			)
+
 	return g
