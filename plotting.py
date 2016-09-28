@@ -35,7 +35,7 @@ def circular_depgraph(g,
 	#here we do black magic to get proper output size (controls vertex spacing) and scaling
 	vertex_number = g.num_vertices()
 	view_zoom = (vertex_number*36.0485)**(-10.068/vertex_number)+0.017037
-	output_size = vertex_number*6+70
+	output_size = vertex_number*6+100
 	title_size = vertex_number/47
 	dpi=300
 	character_offset = title_size/output_size

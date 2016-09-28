@@ -214,7 +214,6 @@ def tree_graph(base_overlays, seed_set,
 			dep_dict[cp] = deps
 
 	for seed_cp in seed_set:
-		print(seed_cp)
 		vertices, _ = tree_iterator(g, seed_cp, vertices, dep_dict,
 			seed_set=seed_set,
 			highlight_overlay_cp=highlight_overlay_cp,
