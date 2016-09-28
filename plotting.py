@@ -43,14 +43,6 @@ def circular_depgraph(g,
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
 	print("Plotting dependency graph containing {0} packages, at a resolution of {1} pixels by {1} pixels".format(vertex_number, output_size))
 
-	# fig = plt.figure()
-	# fig = plt.figure(figsize=(output_size/dpi, output_size/dpi), dpi=dpi)
-	# fig.text(0.8,0.8,"Science", ha="center", va="bottom", size=vertex_number/47,color="blue")
-	# fig.suptitle('NeuroGentooScience', fontsize=vertex_number/47, fontweight='bold')
-	# fig.text(0.6, 0.6, "Neuro", ha="center", va="bottom", size=title_size,color="red")
-	# fig.text(0.6+5*character_offset, 0.6, "Gentoo", ha="center", va="bottom", size=title_size)
-	# fig.text(0.6+11*character_offset,0.6,"Science", ha="center", va="bottom", size=title_size,color="blue")
-
 	if plot_type == "graph":
 		gt.graph_draw(g, pos=pos,
 				edge_control_points=cts,
@@ -84,6 +76,3 @@ def circular_depgraph(g,
 			output_size=[output_size,output_size],
 			output=save_as,
 			)
-
-	# fig.text(0.5,0.5,"Science", ha="center", va="bottom", size=999,color="blue")
-	# plt.savefig("/home/chymera/foo.pdf")
