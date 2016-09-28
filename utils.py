@@ -66,29 +66,35 @@ def tree_add_vertex_and_properties(g, cp, vertices,
 	highlight_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,2],
 	base_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,1],
 	):
-	try:
-		cp_for_color_selection = g.vp.vlabel[v1]
-	except ValueError:
-		cp_for_color_selection = cp
-	if cp_for_color_selection in top_set:
+	if cp in top_set:
 		vcolor = seed_property_values[0]
 		vtext_color = seed_property_values[1]
-		ecolor = seed_property_values[2]
-		eorder = seed_property_values[3]
-	elif cp_for_color_selection in second_set:
+		ecolor = eorder = False
+	elif cp in second_set:
 		vcolor = highlight_property_values[0]
 		vtext_color = highlight_property_values[1]
-		ecolor = highlight_property_values[2]
-		eorder = highlight_property_values[3]
-	elif cp_for_color_selection in third_set:
+		ecolor = eorder = False
+	elif cp in third_set:
 		vcolor = base_property_values[0]
 		vtext_color = base_property_values[1]
-		ecolor = base_property_values[2]
-		eorder = base_property_values[3]
+		ecolor = eorder = False
 	else:
 		print("Package \""+cp+"\" was not found in the seed set, the highlight overlays, or the base overlays. Where is it coming from?")
 		return vertices, False
-	print("tree_add_vertex_and_properties:",v1)
+	try:
+		cp_for_ecolor_selection = g.vp.vlabel[v1]
+	except ValueError:
+		pass
+	else:
+		if cp_for_ecolor_selection in top_set:
+			ecolor = seed_property_values[2]
+			eorder = seed_property_values[3]
+		elif cp_for_ecolor_selection in second_set:
+			ecolor = highlight_property_values[2]
+			eorder = highlight_property_values[3]
+		elif cp_for_ecolor_selection in third_set:
+			ecolor = base_property_values[2]
+			eorder = base_property_values[3]
 	vertices, v2 = add_vertex_and_properties(g, cp, vertices, v1,
 		vcolor=vcolor,
 		vtext_color=vtext_color,
@@ -114,10 +120,8 @@ def add_vertex_and_properties(g, cp, vertices,
 		vertices[cp] = g.vertex_index[v2]
 	else:
 		v2 = g.vertex(v2_index)
-	print("add_vertex_and_properties:",v1,v2)
 	if v1:
 		e = g.add_edge(v1, v2)
-		print("added")
 		g.ep.egradient[e] = (1,)+ecolor
 		g.ep.eorder[e] = eorder
 	return vertices, v2
