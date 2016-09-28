@@ -142,6 +142,8 @@ def get_cp_deps(cp, overlay_path, porttree, include_optional_deps=False):
 		if not include_optional_deps:
 			# optional dep syntax looks like `gdm? ( gnome-base/gdm ) `
 			deps = re.sub(r"\? \( .+? \)","",deps)
+		# only keep first package from exactly-one-of lists
+		deps = re.sub(r"\|\| \( (.+?) .+? \)",r"\1",deps)
 		deps = deps.split(" ")
 		deps = list(set(deps)) # de-duplicate
 	else:
@@ -158,12 +160,16 @@ def get_cp_deps(cp, overlay_path, porttree, include_optional_deps=False):
 			for delimiter in ["[",":"]:
 				if delimiter in deps[ix]:
 					deps[ix] = deps[ix].split(delimiter)[0]
-			if deps[ix][:2] in [">=", "<=", "!<", "!>", "!=", "!!", "!~"]:
+			if deps[ix][:2] in [">=", "<=", "!<", "!>", "!="]:
 				deps[ix] = deps[ix][2:]
-			if deps[ix][:1] in [">", "<", "~", "=", "!"]:
+			if deps[ix][:1] in [">", "<", "~", "="]:
 				deps[ix] = deps[ix][1:]
 			if deps[ix][-1:] in ["*"]:
 				deps[ix] = deps[ix][:-1]
+			if deps[ix][:2] in ["!!", "!~"]:
+				deps[ix] = None
+			elif deps[ix][:1] == "!":
+				deps[ix] = None
 	deps  = list(filter(None, deps))
 	for ix in range(len(deps)):
 		if portage.pkgsplit(deps[ix]) != None:
