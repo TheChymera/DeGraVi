@@ -50,7 +50,7 @@ def dep_tree():
 		highlight_edge_color=GENTOO_PURPLE_LIGHT2,
 		base_color=GENTOO_PURPLE_GREY,
 		base_text_color=GENTOO_PURPLE,
-		base_edge_color=GENTOO_PURPLE_GREY,
+		base_edge_color=GENTOO_PURPLE_GREY_A075,
 		)
 	circular_depgraph(g,
 	save_as="~/tg.pdf"
@@ -58,5 +58,5 @@ def dep_tree():
 
 if __name__ == '__main__':
 	dep_tree()
-	neurogentoo_full_graph()
-	neurogentoo_graph()
+	# neurogentoo_full_graph()
+	# neurogentoo_graph()
