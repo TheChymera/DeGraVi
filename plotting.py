@@ -35,7 +35,7 @@ def circular_depgraph(g,
 	#here we do black magic to get proper output size (controls vertex spacing) and scaling
 	vertex_number = g.num_vertices()
 	view_zoom = (vertex_number*36.0485)**(-10.068/vertex_number)+0.017037
-	output_size = vertex_number*6+50
+	output_size = vertex_number*6+70
 	title_size = vertex_number/47
 	dpi=300
 	character_offset = title_size/output_size
@@ -44,8 +44,8 @@ def circular_depgraph(g,
 	print("Plotting dependency graph containing {0} packages, at a resolution of {1} pixels by {1} pixels".format(vertex_number, output_size))
 
 	# fig = plt.figure()
-	fig = plt.figure(figsize=(output_size/dpi, output_size/dpi), dpi=dpi)
-	fig.text(0.8,0.8,"Science", ha="center", va="bottom", size=vertex_number/47,color="blue")
+	# fig = plt.figure(figsize=(output_size/dpi, output_size/dpi), dpi=dpi)
+	# fig.text(0.8,0.8,"Science", ha="center", va="bottom", size=vertex_number/47,color="blue")
 	# fig.suptitle('NeuroGentooScience', fontsize=vertex_number/47, fontweight='bold')
 	# fig.text(0.6, 0.6, "Neuro", ha="center", va="bottom", size=title_size,color="red")
 	# fig.text(0.6+5*character_offset, 0.6, "Gentoo", ha="center", va="bottom", size=title_size)
@@ -72,7 +72,6 @@ def circular_depgraph(g,
 				output_size=[output_size,output_size],
 				output=save_as,
 				fit_view=view_zoom,
-				mplfig=fig,
 				)
 	elif plot_type == "state":
 		gt.draw_hierarchy(state,
@@ -87,4 +86,4 @@ def circular_depgraph(g,
 			)
 
 	# fig.text(0.5,0.5,"Science", ha="center", va="bottom", size=999,color="blue")
-	plt.savefig("/home/chymera/foo.pdf")
+	# plt.savefig("/home/chymera/foo.pdf")

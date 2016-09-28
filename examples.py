@@ -48,9 +48,9 @@ def dep_tree():
 		highlight_color=GENTOO_PURPLE_LIGHT2,
 		highlight_text_color=GENTOO_PURPLE,
 		highlight_edge_color=GENTOO_PURPLE_LIGHT2,
-		base_color=GENTOO_PURPLE_LIGHT2,
+		base_color=GENTOO_PURPLE_GREY,
 		base_text_color=GENTOO_PURPLE,
-		base_edge_color=GENTOO_PURPLE_LIGHT2,
+		base_edge_color=GENTOO_PURPLE_GREY,
 		)
 	circular_depgraph(g,
 	save_as="~/tg.pdf"
