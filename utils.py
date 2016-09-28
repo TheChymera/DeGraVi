@@ -10,7 +10,7 @@ GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
 GENTOO_GREEN = (0.451,0.824,0.086,1)
 
 def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlight_overlay_cp=[], all_cp=[], stophere=False, **kwargs):
-	"""Walk dependency graph given by `dep_dict` starting with `seed_cp`. Interrupt walk when reaching an already walked package.
+	"""Walk dependency graph given by `dep_dict` starting with `seed_cp`.
 
 	Parameters
 	----------
@@ -35,6 +35,9 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlig
 	all_cp : list , optional
 	Set of all package names (in category/package format) all overlays. This is mainly relevant for coloring.
 
+	stophere : boolean, optional
+	Stop after adding this node and the corresponding edge. This interrupts the iteration
+
 	**kwargs : passed to tree_add_vertex_and_properties()
 	"""
 
@@ -46,8 +49,6 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlig
 				try:
 					_ = vertices[dep]
 				except KeyError:
-					print("tree_iterator:",v1)
-					print("{} → {}".format(seed_cp, dep))
 					vertices, _ = tree_iterator(g, dep, vertices, dep_dict, v1, seed_set=seed_set, highlight_overlay_cp=highlight_overlay_cp, all_cp=all_cp,
 						**kwargs)
 				else:
