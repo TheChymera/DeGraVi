@@ -6,11 +6,14 @@ import portage
 GENTOO_PURPLE = (0.329,0.282,0.478,1)
 GENTOO_PURPLE_LIGHT = (0.38,0.325,0.553,1)
 GENTOO_PURPLE_LIGHT2 = (0.432,0.337,0.686,1)
-GENTOO_PURPLE_LIGHT2_A075 = (0.432,0.337,0.686,0.75)
+GENTOO_PURPLE_LIGHT2_A75 = (0.432,0.337,0.686,0.75)
+GENTOO_PURPLE_LIGHT2_A50 = (0.432,0.337,0.686,0.5)
 GENTOO_PURPLE_GREY = (0.867,0.855,0.925,1)
-GENTOO_PURPLE_GREY_A075 = (0.867,0.855,0.925,0.75)
+GENTOO_PURPLE_GREY_A75 = (0.867,0.855,0.925,0.75)
+GENTOO_PURPLE_GREY_A50 = (0.867,0.855,0.925,0.5)
 GENTOO_GREEN = (0.451,0.824,0.086,1)
-GENTOO_GREEN_A075 = (0.451,0.824,0.086,0.75)
+GENTOO_GREEN_A75 = (0.451,0.824,0.086,0.75)
+GENTOO_GREEN_A50 = (0.451,0.824,0.086,0.5)
 
 def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlight_overlay_cp=[], all_cp=[], stophere=False, **kwargs):
 	"""Walk dependency graph given by `dep_dict` starting with `seed_cp`.

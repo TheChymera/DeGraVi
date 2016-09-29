@@ -8,11 +8,12 @@ from plotting import circular_depgraph
 from utils import (GENTOO_PURPLE,
 	GENTOO_PURPLE_LIGHT,
 	GENTOO_PURPLE_LIGHT2,
-	GENTOO_PURPLE_LIGHT2_A075,
+	GENTOO_PURPLE_LIGHT2_A75,
 	GENTOO_PURPLE_GREY,
-	GENTOO_PURPLE_GREY_A075,
+	GENTOO_PURPLE_GREY_A75,
+	GENTOO_PURPLE_GREY_A50,
 	GENTOO_GREEN,
-	GENTOO_GREEN_A075,
+	GENTOO_GREEN_A75,
 	)
 
 #relative paths
@@ -52,16 +53,16 @@ def dep_tree():
 	g = tree_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
 		seed_color=GENTOO_GREEN,
 		seed_text_color=GENTOO_GREEN,
-		seed_edge_color=GENTOO_GREEN,
+		seed_edge_color=GENTOO_GREEN_A75,
 		highlight_color=GENTOO_PURPLE_LIGHT2,
 		highlight_text_color=GENTOO_PURPLE,
-		highlight_edge_color=GENTOO_PURPLE_LIGHT2,
+		highlight_edge_color=GENTOO_PURPLE_LIGHT2_A75,
 		base_color=GENTOO_PURPLE_GREY,
 		base_text_color=GENTOO_PURPLE,
-		base_edge_color=GENTOO_PURPLE_GREY_A075,
+		base_edge_color=GENTOO_PURPLE_GREY_A50,
 		)
 	circular_depgraph(g,
-	save_as="~/tg.pdf"
+	save_as="~/tg.png"
 	)
 
 if __name__ == '__main__':
