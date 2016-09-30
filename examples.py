@@ -3,7 +3,7 @@ import os
 import matplotlib
 matplotlib.use('cairo')
 
-from graph import repositories_graph, seeded_graph
+from generate_graph import repositories_graph, seeded_graph
 from plotting import circular_depgraph
 from utils import (
 	GENTOO_PURPLE,
