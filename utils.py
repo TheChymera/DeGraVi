@@ -15,7 +15,7 @@ GENTOO_GREEN = (0.451,0.824,0.086,1)
 GENTOO_GREEN_A75 = (0.451,0.824,0.086,0.75)
 GENTOO_GREEN_A50 = (0.451,0.824,0.086,0.5)
 
-def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlight_overlay_cp=[], all_cp=[], stophere=False, **kwargs):
+def tree_iterator(g, seed_cp, vertices, dep_dict, sets_property_values, v1=False, stophere=False):
 	"""Walk dependency graph given by `dep_dict` starting with `seed_cp`.
 
 	Parameters
@@ -44,27 +44,50 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, v1=False, seed_set=[], highlig
 	stophere : boolean, optional
 	Stop after adding this node and the corresponding edge. This interrupts the iteration
 
-	**kwargs : passed to tree_add_vertex_and_properties()
+	**kwargs : passed to tree_add_vertex_and_edge()
 	"""
 
-	if seed_cp in seed_set+all_cp:
-		vertices, v1 = tree_add_vertex_and_properties(g, seed_cp, vertices, v1, top_set=seed_set, second_set=highlight_overlay_cp, third_set=all_cp,
-		**kwargs)
+	if seed_cp in sum([item[0] for item in sets_property_values],[]):
+		vcolor, vtext_color, ecolor, eorder = vertex_and_edge_appearance(seed_cp, sets_property_values, g=g, v1=v1)
+		vertices, v1 = add_vertex_and_edge(g, seed_cp, vertices, v1, vcolor=vcolor, vtext_color=vtext_color, ecolor=ecolor, eorder=eorder)
 		if not stophere:
 			for dep in dep_dict[seed_cp]:
 				try:
 					_ = vertices[dep]
 				except KeyError:
-					vertices, _ = tree_iterator(g, dep, vertices, dep_dict, v1, seed_set=seed_set, highlight_overlay_cp=highlight_overlay_cp, all_cp=all_cp,
-						**kwargs)
+					vertices, _ = tree_iterator(g, dep, vertices, dep_dict, sets_property_values, v1=v1)
 				else:
-					vertices, _ = tree_iterator(g, dep, vertices, dep_dict, v1, seed_set=seed_set, highlight_overlay_cp=highlight_overlay_cp, all_cp=all_cp, stophere=True,
-						**kwargs)
+					vertices, _ = tree_iterator(g, dep, vertices, dep_dict, sets_property_values, v1=v1, stophere=True)
 	else:
 		print("Package \""+seed_cp+"\" was not found in the seed set, or the base and highlight overlays. Where is it coming from?")
 	return vertices, v1
 
-def tree_add_vertex_and_properties(g, cp, vertices,
+def vertex_and_edge_appearance(cp,
+	sets_property_values,
+	g=False,
+	v1=False,
+	):
+	for set_property_values in sets_property_values:
+		if cp in set_property_values[0]:
+			vcolor = set_property_values[1][0]
+			vtext_color = set_property_values[1][1]
+			ecolor = eorder = False
+			break
+	if v1 and g:
+		try:
+			cp_for_ecolor_selection = g.vp.vlabel[v1]
+		except ValueError:
+			pass
+		else:
+			for set_property_values in sets_property_values:
+				if cp_for_ecolor_selection in set_property_values[0]:
+					ecolor = set_property_values[1][2]
+					eorder = set_property_values[1][3]
+					break
+	return vcolor, vtext_color, ecolor, eorder
+
+
+def tree_add_vertex_and_edge(g, cp, vertices,
 	v1=False,
 	top_set=[],
 	second_set=[],
@@ -102,7 +125,7 @@ def tree_add_vertex_and_properties(g, cp, vertices,
 		elif cp_for_ecolor_selection in third_set:
 			ecolor = base_property_values[2]
 			eorder = base_property_values[3]
-	vertices, v2 = add_vertex_and_properties(g, cp, vertices, v1,
+	vertices, v2 = add_vertex_and_edge(g, cp, vertices, v1,
 		vcolor=vcolor,
 		vtext_color=vtext_color,
 		ecolor=ecolor,
@@ -110,7 +133,7 @@ def tree_add_vertex_and_properties(g, cp, vertices,
 		)
 	return vertices, v2
 
-def add_vertex_and_properties(g, cp, vertices,
+def add_vertex_and_edge(g, cp, vertices,
 	v1=False,
 	vcolor=GENTOO_PURPLE,
 	vtext_color=GENTOO_PURPLE,

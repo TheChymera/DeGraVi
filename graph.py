@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
-from utils import get_cp_deps, tree_add_vertex_and_properties, tree_iterator, add_vertex_and_properties
+from utils import get_cp_deps, vertex_and_edge_appearance, tree_iterator, add_vertex_and_edge
 from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 def populate_from_repository(g, overlay_path, porttree,
@@ -72,7 +72,7 @@ def populate_from_repository(g, overlay_path, porttree,
 		for dep in deps:
 			if only_overlay:
 				if dep in all_cp or dep in vertices:
-					vertices, _ = add_vertex_and_properties(g, dep, vertices, v1,
+					vertices, _ = add_vertex_and_edge(g, dep, vertices, v1,
 						vcolor=overlay_color,
 						vtext_color=overlay_text_color,
 						ecolor=overlay_edge_color,
@@ -80,12 +80,11 @@ def populate_from_repository(g, overlay_path, porttree,
 						)
 				else:
 					break
-			vertices, _ = tree_add_vertex_and_properties(g, dep, vertices, v1,
-				top_set=all_cp,
-				second_set=all_cp+deps,
-				seed_property_values=[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order],
-				highlight_property_values=[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order],
-				)
+			sets_property_values=[]
+			sets_property_values.append([top_set,[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order]])
+			sets_property_values.append([all_cp+deps,[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order]])
+			vcolor, vtext_color, ecolor, eorder = vertex_and_edge_appearance(seed_cp, sets_property_values, g, v1)
+			vertices, _ = add_vertex_and_edge(g, cp, vertices, v1, vcolor=vcolor, vtext_color=vtext_color, ecolor=ecolor, eorder=eorder)
 
 	return g, vertices
 
@@ -98,6 +97,7 @@ def dependency_graph(overlay_paths,
 	extraneous_edge_colors=[GENTOO_PURPLE],
 	highlight=[],
 	highlight_color=GENTOO_GREEN,
+	highlight_edge_color=GENTOO_GREEN,
 	highlight_text_color=GENTOO_GREEN,
 	only_connected=True,
 	only_overlay=True,
@@ -162,7 +162,7 @@ def dependency_graph(overlay_paths,
 
 	for e in g.edges():
 		if g.vp.vlabel[e.source()] in highlight:
-			g.ep.egradient[e] = (1,)+highlight_text_color
+			g.ep.egradient[e] = (1,)+highlight_edge_color
 			g.ep.eorder[e] = 999 #value which is likely to be larger than all others
 
 	if only_connected:
@@ -213,14 +213,14 @@ def tree_graph(base_overlays, seed_set,
 		else:
 			dep_dict[cp] = deps
 
+	sets_property_values=[]
+	sets_property_values.append([seed_set,[seed_color, seed_text_color, seed_edge_color, 3]])
+	sets_property_values.append([highlight_overlay_cp,[highlight_color, highlight_text_color, highlight_edge_color,2]])
+	sets_property_values.append([all_cp,[base_color, base_text_color, base_edge_color, 1]])
+
 	for seed_cp in seed_set:
 		vertices, _ = tree_iterator(g, seed_cp, vertices, dep_dict,
-			seed_set=seed_set,
-			highlight_overlay_cp=highlight_overlay_cp,
-			all_cp=all_cp,
-			seed_property_values=[seed_color, seed_text_color, seed_edge_color, 3],
-			highlight_property_values=[highlight_color, highlight_text_color, highlight_edge_color,2],
-			base_property_values=[base_color, base_text_color, base_edge_color, 1],
+			sets_property_values=sets_property_values
 			)
 
 	return g
