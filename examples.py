@@ -27,22 +27,25 @@ def neurogentoo_graph():
 		overlay_text_colors=[GENTOO_PURPLE],
 		extraneous_colors=[GENTOO_PURPLE_GREY],
 		extraneous_text_colors=[GENTOO_PURPLE_GREY],
-		extraneous_edge_colors=[GENTOO_PURPLE],
+		extraneous_edge_colors=[GENTOO_PURPLE_LIGHT2_A75],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,
+		highlight_edge_color=GENTOO_GREEN_A75,
 		textcolor=GENTOO_PURPLE,
 		only_overlay=False,
 		)
 	circular_depgraph(g,
 	save_as="~/ng.pdf"
 	)
+
 def neurogentoo_full_graph():
 	g = dependency_graph(['/usr/portage','/usr/local/portage/neurogentoo'],
-		overlay_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
+		overlay_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT2],
 		overlay_text_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE],
-		overlay_edge_colors=[GENTOO_PURPLE_GREY,GENTOO_PURPLE_LIGHT],
+		overlay_edge_colors=[GENTOO_PURPLE_GREY_A50,GENTOO_PURPLE_LIGHT2_A75],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,
+		highlight_edge_color=GENTOO_GREEN_A75,
 		textcolor=GENTOO_PURPLE,
 		)
 	circular_depgraph(g,
@@ -62,7 +65,7 @@ def dep_tree():
 		base_edge_color=GENTOO_PURPLE_GREY_A50,
 		)
 	circular_depgraph(g,
-	save_as="~/tg.png"
+	save_as="~/tg.pdf"
 	)
 
 if __name__ == '__main__':
