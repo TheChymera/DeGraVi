@@ -5,7 +5,10 @@ matplotlib.use('cairo')
 
 from graph import dependency_graph, tree_graph
 from plotting import circular_depgraph
-from utils import (GENTOO_PURPLE,
+from utils import (
+	GENTOO_PURPLE,
+	GENTOO_PURPLE_A75,
+	GENTOO_PURPLE_A50,
 	GENTOO_PURPLE_LIGHT,
 	GENTOO_PURPLE_LIGHT2,
 	GENTOO_PURPLE_LIGHT2_A75,
@@ -25,9 +28,9 @@ def neurogentoo_graph():
 	g = dependency_graph(['/usr/local/portage/neurogentoo'],
 		overlay_colors=[GENTOO_PURPLE_LIGHT],
 		overlay_text_colors=[GENTOO_PURPLE],
+		overlay_edge_colors=[GENTOO_PURPLE_A50],
 		extraneous_colors=[GENTOO_PURPLE_GREY],
 		extraneous_text_colors=[GENTOO_PURPLE_GREY],
-		extraneous_edge_colors=[GENTOO_PURPLE_LIGHT2_A75],
 		highlight=NEUROGENTOO,
 		highlight_color=GENTOO_GREEN,
 		highlight_edge_color=GENTOO_GREEN_A75,
@@ -71,4 +74,4 @@ def dep_tree():
 if __name__ == '__main__':
 	dep_tree()
 	# neurogentoo_full_graph()
-	# neurogentoo_graph()
+	neurogentoo_graph()

@@ -81,10 +81,10 @@ def populate_from_repository(g, overlay_path, porttree,
 				else:
 					break
 			sets_property_values=[]
-			sets_property_values.append([top_set,[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order]])
+			sets_property_values.append([all_cp,[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order]])
 			sets_property_values.append([all_cp+deps,[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order]])
-			vcolor, vtext_color, ecolor, eorder = vertex_and_edge_appearance(seed_cp, sets_property_values, g, v1)
-			vertices, _ = add_vertex_and_edge(g, cp, vertices, v1, vcolor=vcolor, vtext_color=vtext_color, ecolor=ecolor, eorder=eorder)
+			vcolor, vtext_color, ecolor, eorder = vertex_and_edge_appearance(dep, sets_property_values, g, v1)
+			vertices, _ = add_vertex_and_edge(g, dep, vertices, v1, vcolor=vcolor, vtext_color=vtext_color, ecolor=ecolor, eorder=eorder)
 
 	return g, vertices
 
