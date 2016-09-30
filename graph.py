@@ -88,7 +88,7 @@ def populate_from_repository(g, overlay_path, porttree,
 
 	return g, vertices
 
-def dependency_graph(overlay_paths,
+def repositories_graph(overlay_paths,
 	overlay_colors=[GENTOO_PURPLE],
 	overlay_text_colors=[GENTOO_PURPLE],
 	overlay_edge_colors=[GENTOO_PURPLE],
@@ -173,7 +173,7 @@ def dependency_graph(overlay_paths,
 
 	return g
 
-def tree_graph(base_overlays, seed_set,
+def seeded_graph(base_overlays, seed_set,
 	highlight_overlays=[],
 	seed_color=GENTOO_GREEN,
 	seed_text_color=GENTOO_GREEN,
