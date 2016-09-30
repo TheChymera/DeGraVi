@@ -32,19 +32,8 @@ def tree_iterator(g, seed_cp, vertices, dep_dict, sets_property_values, v1=False
 	v1 : graph_tool Vertex instance , optional
 	Vertex to connect to the next generated vertex.
 
-	seed_set : list , optional
-	Set of all seed package names (in category/package format). This is mainly relevant for coloring.
-
-	highlight_overlay_cp : list , optional
-	Set of all package names (in category/package format) from overlays to be highlighted. This is mainly relevant for coloring.
-
-	all_cp : list , optional
-	Set of all package names (in category/package format) all overlays. This is mainly relevant for coloring.
-
 	stophere : boolean, optional
 	Stop after adding this node and the corresponding edge. This interrupts the iteration
-
-	**kwargs : passed to tree_add_vertex_and_edge()
 	"""
 
 	if seed_cp in sum([item[0] for item in sets_property_values],[]):
@@ -85,53 +74,6 @@ def vertex_and_edge_appearance(cp,
 					eorder = set_property_values[1][3]
 					break
 	return vcolor, vtext_color, ecolor, eorder
-
-
-def tree_add_vertex_and_edge(g, cp, vertices,
-	v1=False,
-	top_set=[],
-	second_set=[],
-	third_set=[],
-	seed_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,3],
-	highlight_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,2],
-	base_property_values=[GENTOO_PURPLE,GENTOO_PURPLE,GENTOO_PURPLE,1],
-	):
-	if cp in top_set:
-		vcolor = seed_property_values[0]
-		vtext_color = seed_property_values[1]
-		ecolor = eorder = False
-	elif cp in second_set:
-		vcolor = highlight_property_values[0]
-		vtext_color = highlight_property_values[1]
-		ecolor = eorder = False
-	elif cp in third_set:
-		vcolor = base_property_values[0]
-		vtext_color = base_property_values[1]
-		ecolor = eorder = False
-	else:
-		print("Package \""+cp+"\" was not found in the seed set, the highlight overlays, or the base overlays. Where is it coming from?")
-		return vertices, False
-	try:
-		cp_for_ecolor_selection = g.vp.vlabel[v1]
-	except ValueError:
-		pass
-	else:
-		if cp_for_ecolor_selection in top_set:
-			ecolor = seed_property_values[2]
-			eorder = seed_property_values[3]
-		elif cp_for_ecolor_selection in second_set:
-			ecolor = highlight_property_values[2]
-			eorder = highlight_property_values[3]
-		elif cp_for_ecolor_selection in third_set:
-			ecolor = base_property_values[2]
-			eorder = base_property_values[3]
-	vertices, v2 = add_vertex_and_edge(g, cp, vertices, v1,
-		vcolor=vcolor,
-		vtext_color=vtext_color,
-		ecolor=ecolor,
-		eorder=eorder,
-		)
-	return vertices, v2
 
 def add_vertex_and_edge(g, cp, vertices,
 	v1=False,
