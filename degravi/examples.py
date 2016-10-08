@@ -72,6 +72,6 @@ def neurogentoo():
 	)
 
 if __name__ == '__main__':
-	# neurogentoo()
-	neuro_gentoo_science()
-	gentoo_science()
+	neurogentoo()
+	# neuro_gentoo_science()
+	# gentoo_science()

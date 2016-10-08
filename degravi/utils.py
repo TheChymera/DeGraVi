@@ -133,13 +133,13 @@ def get_cp_deps(cp, overlay_path, porttree, include_optional_deps=False):
 			for delimiter in ["[",":"]:
 				if delimiter in deps[ix]:
 					deps[ix] = deps[ix].split(delimiter)[0]
-			if deps[ix][:2] in [">=", "<=", "!<", "!>", "!="]:
+			if deps[ix][:2] in [">=", "<="]:
 				deps[ix] = deps[ix][2:]
 			if deps[ix][:1] in [">", "<", "~", "="]:
 				deps[ix] = deps[ix][1:]
 			if deps[ix][-1:] in ["*"]:
 				deps[ix] = deps[ix][:-1]
-			if deps[ix][:2] in ["!!", "!~"]:
+			if deps[ix][:2] in ["!!", "!~", "!<", "!>", "!="]:
 				deps[ix] = None
 			elif deps[ix][:1] == "!":
 				deps[ix] = None
