@@ -1,4 +1,6 @@
-dev-python/future
+dev-python/imageio
+dev-python/tqdm
+dev-python/moviepy
 dev-python/matrix2latex
 dev-python/prov
 dev-python/pydotplus
