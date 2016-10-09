@@ -38,8 +38,8 @@ def gentoo_science():
 		only_overlay=False,
 		)
 	circular_depgraph(g,
-	save_as="~/gentoo_science.pdf"
-	)
+		save_as="~/gentoo_science.pdf"
+		)
 
 def neuro_gentoo_science():
 	g = repositories_graph(['/usr/portage','/usr/local/portage/neurogentoo'],
@@ -52,8 +52,8 @@ def neuro_gentoo_science():
 		textcolor=GENTOO_PURPLE,
 		)
 	circular_depgraph(g,
-	save_as="~/neuro_gentoo_science.pdf"
-	)
+		save_as="~/neuro_gentoo_science.pdf"
+		)
 
 def neurogentoo():
 	g = seeded_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
@@ -68,8 +68,8 @@ def neurogentoo():
 		base_edge_color=GENTOO_PURPLE_GREY_A50,
 		)
 	circular_depgraph(g,
-	save_as="~/neurogentoo.pdf"
-	)
+		save_as="~/neurogentoo.pdf"
+		)
 
 if __name__ == '__main__':
 	neurogentoo()
