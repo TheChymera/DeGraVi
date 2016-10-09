@@ -100,7 +100,24 @@ def add_vertex_and_edge(g, cp, vertices,
 		g.ep.eorder[e] = eorder
 	return vertices, v2
 
-def get_cp_deps(cp, overlay_path, porttree, include_optional_deps=False):
+def get_cp_deps(cp, overlay_path, porttree, matchnone=True):
+	"""Get cp formatted deps for given cp.
+
+	Parameters
+	----------
+	cp : str
+	Category and package formatted according to the Portage cp syntax (category/package)
+
+	overlay_path : str
+	Path to the overlay in which to check for package versions
+
+	porttree : porttree object
+	Porttree object obtained via e.g. `porttree = portage.db[portage.root]['porttree']`
+
+	matchnone : boolean , optional
+	Whether to only match mandatory dependencies.
+	"""
+
 	newest_cpv = cp+"-0_alpha_pre" #nothing should be earlier than this
 	ceil_cpv = cp+"-9999" #ideally we would not want live packages
 	for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_path):
@@ -111,10 +128,8 @@ def get_cp_deps(cp, overlay_path, porttree, include_optional_deps=False):
 				newest_cpv = cpv
 	if newest_cpv != cp+"-0_alpha_pre":
 		deps = porttree.dbapi.aux_get(newest_cpv, ["DEPEND","RDEPEND","PDEPEND"])
+		deps = portage.dep.use_reduce(depstr=deps, matchnone=matchnone, flat=True)
 		deps = ' '.join(deps)
-		if not include_optional_deps:
-			# optional dep syntax looks like `gdm? ( gnome-base/gdm ) `
-			deps = re.sub(r"\? \( .+? \)","",deps)
 		# only keep first package from exactly-one-of lists
 		deps = re.sub(r"\|\| \( (.+?) .+? \)",r"\1",deps)
 		deps = deps.split(" ")
