@@ -1,5 +1,3 @@
-
-
 import os
 
 from generate_graph import repositories_graph, seeded_graph
@@ -91,7 +89,7 @@ def neurogentoo_mindeps():
 		)
 
 if __name__ == '__main__':
-	neurogentoo_maxdeps()
+	# neurogentoo_maxdeps()
 	neurogentoo_mindeps()
 	# neuro_gentoo_science()
 	# gentoo_science()
