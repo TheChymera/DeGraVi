@@ -100,7 +100,7 @@ def add_vertex_and_edge(g, cp, vertices,
 		g.ep.eorder[e] = eorder
 	return vertices, v2
 
-def get_cp_deps(cp, overlay_path, porttree, matchnone=True):
+def get_cp_deps(cp, overlay_path, porttree, matchnone=True, matchall=True):
 	"""Get cp formatted deps for given cp.
 
 	Parameters
@@ -116,6 +116,9 @@ def get_cp_deps(cp, overlay_path, porttree, matchnone=True):
 
 	matchnone : boolean , optional
 	Whether to only match mandatory dependencies.
+
+	matcall : boolean , optional
+	Whether to match all mandatory dependencies.
 	"""
 
 	newest_cpv = cp+"-0_alpha_pre" #nothing should be earlier than this
@@ -128,7 +131,7 @@ def get_cp_deps(cp, overlay_path, porttree, matchnone=True):
 				newest_cpv = cpv
 	if newest_cpv != cp+"-0_alpha_pre":
 		deps = porttree.dbapi.aux_get(newest_cpv, ["DEPEND","RDEPEND","PDEPEND"])
-		deps = portage.dep.use_reduce(depstr=deps, matchnone=matchnone, flat=True)
+		deps = portage.dep.use_reduce(depstr=deps, matchnone=matchnone, matchall=matchall, flat=True)
 		deps = ' '.join(deps)
 		# only keep first package from exactly-one-of lists
 		deps = re.sub(r"\|\| \( (.+?) .+? \)",r"\1",deps)
@@ -164,3 +167,79 @@ def get_cp_deps(cp, overlay_path, porttree, matchnone=True):
 			deps[ix] = portage.pkgsplit(deps[ix])[0]
 
 	return deps
+
+def populate_from_repository(g, overlay_path, porttree,
+	vertices={},
+	only_overlay=True,
+	overlay_color=GENTOO_PURPLE_LIGHT2,
+	overlay_text_color=GENTOO_PURPLE,
+	overlay_edge_color=GENTOO_PURPLE_LIGHT2,
+	overlay_edge_order=2,
+	extraneous_color=GENTOO_PURPLE_GREY,
+	extraneous_text_color=GENTOO_PURPLE,
+	extraneous_edge_color=GENTOO_PURPLE_GREY,
+	extraneous_edge_order=1,
+	):
+
+
+	all_cp = porttree.dbapi.cp_all(trees=[overlay_path])
+	for cp in all_cp:
+		newest_cpv = cp+"-0_beta" #nothing should be earlier than this
+		for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_path):
+			if portage.pkgcmp(portage.pkgsplit(cpv), portage.pkgsplit(newest_cpv)) >= 0:
+				newest_cpv = cpv
+		if newest_cpv != cp+"-0_beta":
+			deps = porttree.dbapi.aux_get(newest_cpv, ["DEPEND","RDEPEND","PDEPEND"])
+			deps = ' '.join(deps).split() # consolidate deps
+			deps = list(set(deps)) # de-duplicate
+
+		#correct dependency list formatting
+		for ix in range(len(deps)):
+			#remove non-package entries from deps list
+			if not "/" in deps[ix]:
+				deps[ix] = None
+			else:
+				#remove all syntax that does not match cpv
+				for delimiter in ["[",":"]:
+					if delimiter in deps[ix]:
+						deps[ix] = deps[ix].split(delimiter)[0]
+				if deps[ix][:2] in [">=", "<=", "!<", "!>"]:
+					deps[ix] = deps[ix][2:]
+				if deps[ix][:1] in [">", "<", "~", "=", "!"]:
+					deps[ix] = deps[ix][1:]
+				if deps[ix][-1:] in ["*"]:
+					deps[ix] = deps[ix][:-1]
+		deps  = list(filter(None, deps))
+		for ix, a in enumerate(deps):
+			if portage.pkgsplit(a) != None:
+				deps[ix] = portage.pkgsplit(a)[0]
+
+		#Populate graph
+		try:
+			cp_index = vertices[cp]
+		except KeyError:
+			v1 = g.add_vertex()
+			g.vp.vlabel[v1] = cp
+			g.vp.vcolor[v1] = overlay_color
+			g.vp.vtext_color[v1] = overlay_text_color
+			vertices[cp] = g.vertex_index[v1]
+		else:
+			v1 = g.vertex(cp_index)
+		for dep in deps:
+			if only_overlay:
+				if dep in all_cp or dep in vertices:
+					vertices, _ = add_vertex_and_edge(g, dep, vertices, v1,
+						vcolor=overlay_color,
+						vtext_color=overlay_text_color,
+						ecolor=overlay_edge_color,
+						eorder=overlay_edge_order,
+						)
+				else:
+					break
+			sets_property_values=[]
+			sets_property_values.append([all_cp,[overlay_color,overlay_text_color,overlay_edge_color,overlay_edge_order]])
+			sets_property_values.append([all_cp+deps,[extraneous_color,extraneous_text_color,extraneous_edge_color,extraneous_edge_order]])
+			vcolor, vtext_color, ecolor, eorder = vertex_and_edge_appearance(dep, sets_property_values, g, v1)
+			vertices, _ = add_vertex_and_edge(g, dep, vertices, v1, vcolor=vcolor, vtext_color=vtext_color, ecolor=ecolor, eorder=eorder)
+
+	return g, vertices

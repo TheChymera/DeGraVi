@@ -55,8 +55,10 @@ def neuro_gentoo_science():
 		save_as="~/neuro_gentoo_science.pdf"
 		)
 
-def neurogentoo():
-	g = seeded_graph(['/usr/portage'], NEUROGENTOO, highlight_overlays=["/usr/local/portage/neurogentoo"],
+def neurogentoo_maxdeps():
+	g = seeded_graph(['/usr/portage'], NEUROGENTOO,
+		highlight_overlays=["/usr/local/portage/neurogentoo"],
+		use_match="all"
 		seed_color=GENTOO_GREEN,
 		seed_text_color=GENTOO_GREEN,
 		seed_edge_color=GENTOO_GREEN_A75,
@@ -68,10 +70,29 @@ def neurogentoo():
 		base_edge_color=GENTOO_PURPLE_GREY_A50,
 		)
 	circular_depgraph(g,
-		save_as="~/neurogentoo.pdf"
+		save_as="~/neurogentoo_maxdeps.pdf"
+		)
+
+def neurogentoo_mindeps():
+	g = seeded_graph(['/usr/portage'], NEUROGENTOO,
+		highlight_overlays=["/usr/local/portage/neurogentoo"],
+		use_match="none"
+		seed_color=GENTOO_GREEN,
+		seed_text_color=GENTOO_GREEN,
+		seed_edge_color=GENTOO_GREEN_A75,
+		highlight_color=GENTOO_PURPLE_LIGHT2,
+		highlight_text_color=GENTOO_PURPLE,
+		highlight_edge_color=GENTOO_PURPLE_LIGHT2_A75,
+		base_color=GENTOO_PURPLE_GREY,
+		base_text_color=GENTOO_PURPLE,
+		base_edge_color=GENTOO_PURPLE_GREY_A50,
+		)
+	circular_depgraph(g,
+		save_as="~/neurogentoo_mindeps.pdf"
 		)
 
 if __name__ == '__main__':
-	neurogentoo()
+	neurogentoo_maxdeps()
+	neurogentoo_mindeps()
 	# neuro_gentoo_science()
 	# gentoo_science()
