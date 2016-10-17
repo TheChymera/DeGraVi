@@ -1,7 +1,6 @@
-import os
 
-import matplotlib
-matplotlib.use('cairo')
+
+import os
 
 from generate_graph import repositories_graph, seeded_graph
 from plotting import circular_depgraph
@@ -58,7 +57,7 @@ def neuro_gentoo_science():
 def neurogentoo_maxdeps():
 	g = seeded_graph(['/usr/portage'], NEUROGENTOO,
 		highlight_overlays=["/usr/local/portage/neurogentoo"],
-		use_match="all"
+		use_match="all",
 		seed_color=GENTOO_GREEN,
 		seed_text_color=GENTOO_GREEN,
 		seed_edge_color=GENTOO_GREEN_A75,
@@ -76,7 +75,7 @@ def neurogentoo_maxdeps():
 def neurogentoo_mindeps():
 	g = seeded_graph(['/usr/portage'], NEUROGENTOO,
 		highlight_overlays=["/usr/local/portage/neurogentoo"],
-		use_match="none"
+		use_match="none",
 		seed_color=GENTOO_GREEN,
 		seed_text_color=GENTOO_GREEN,
 		seed_edge_color=GENTOO_GREEN_A75,
