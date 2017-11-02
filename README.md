@@ -1,4 +1,4 @@
-#DeGraVi
+# DeGraVi
 
 DeGraVi is a dependency graph visualization tool written for the Portage package manager.
 
