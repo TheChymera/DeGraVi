@@ -27,9 +27,12 @@ sci-libs/itk
 sci-libs/nibabel
 sci-libs/nipype
 sci-libs/nipy
+sci-libs/nipy-data
+sci-libs/nipy-templates
 sci-libs/pydicom
 sci-libs/scikits_image
 sci-libs/vxl
 sci-mathematics/mdp
 sci-visualization/mricrogl
 sci-visualization/mricron
+sci-visualization/surf-ice
