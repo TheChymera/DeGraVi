@@ -121,25 +121,25 @@ def get_cp_deps(cp, overlay_path, porttree, matchnone=True, matchall=True):
 	Whether to match all mandatory dependencies.
 	"""
 
-	newest_cpv = cp+"-0_alpha_pre" #nothing should be earlier than this
-	ceil_cpv = cp+"-9999" #ideally we would not want live packages
-	for cpv in porttree.dbapi.cp_list(cp, mytree=overlay_path):
-		if portage.pkgcmp(portage.pkgsplit(cpv), portage.pkgsplit(newest_cpv)) >= 0:
-			if portage.pkgcmp(portage.pkgsplit(ceil_cpv), portage.pkgsplit(cpv)) > 0:
-				newest_cpv = cpv
-			elif newest_cpv == cp+"-0_alpha_pre":
-				newest_cpv = cpv
-	if newest_cpv != cp+"-0_alpha_pre":
-		deps = porttree.dbapi.aux_get(newest_cpv, ["DEPEND","RDEPEND","PDEPEND"])
-		deps = portage.dep.use_reduce(depstr=deps, matchnone=matchnone, matchall=matchall, flat=True)
-		deps = ' '.join(deps)
-		# only keep first package from exactly-one-of lists
-		deps = re.sub(r"\|\| \( (.+?) .+? \)",r"\1",deps)
-		deps = deps.split(" ")
-		deps = list(set(deps)) # de-duplicate
+	# This list always comes pre-sorted, should this no longer be the case at some point, it can be *explicitly* sorted via:
+	# https://dev.gentoo.org/~zmedico/portage/doc/api/portage.dbapi.porttree.html#portage.dbapi.porttree.portdbapi._cpv_sort_ascending
+	all_cpvs = porttree.dbapi.cp_list(cp, mytree=overlay_path)
+	if len(all_cpvs) >= 1:
+		# Ideally we avoid live (`*-9999`) packages if possible, they are in spite of appearances often poorly maintained.
+		newest_cpv = all_cpvs[-1] if all_cpvs[0].endswith("-9999") else all_cpvs[0]
+	elif len(all_cpvs) == 1:
+		newest_cpv = all_cpvs[0]
 	else:
-		print("WARNING: skipping "+newest_cpv)
+		print(f"WARNING: Portage cannot find any versions for the `{cp}` package.")
 		return False
+
+	deps = porttree.dbapi.aux_get(newest_cpv, ["DEPEND","RDEPEND","PDEPEND"])
+	deps = portage.dep.use_reduce(depstr=deps, matchnone=matchnone, matchall=matchall, flat=True)
+	deps = ' '.join(deps)
+	# only keep first package from exactly-one-of lists
+	deps = re.sub(r"\|\| \( (.+?) .+? \)",r"\1",deps)
+	deps = deps.split(" ")
+	deps = list(set(deps)) # de-duplicate
 
 	#correct dependency list formatting
 	for ix in range(len(deps)):
