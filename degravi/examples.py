@@ -21,8 +21,57 @@ thisscriptspath = os.path.dirname(os.path.realpath(__file__))
 neurogentoo_file = os.path.join(thisscriptspath,"neurogentoo.txt")
 NEUROGENTOO = [line.strip() for line in open(neurogentoo_file, 'r')]
 
+
+def one_sci_package(cp):
+	"""
+	Seeded graph for an arbitrary package, highlighting the science overlay.
+
+	Examples
+	--------
+
+	run e.g. `python -c "import examples; examples.one_sci_package('dev-python/heudiconv')"` from the shell.
+
+	"""
+	g = seeded_graph(['/var/db/repos/gentoo'], [cp],
+		highlight_overlays=["/home/chymera/src/sci"],
+		use_match="none",
+		seed_color=GENTOO_GREEN,
+		seed_text_color=GENTOO_GREEN,
+		seed_edge_color=GENTOO_GREEN_A75,
+		highlight_color=GENTOO_PURPLE_LIGHT2,
+		highlight_text_color=GENTOO_PURPLE,
+		highlight_edge_color=GENTOO_PURPLE_LIGHT2_A75,
+		base_color=GENTOO_PURPLE_GREY,
+		base_text_color=GENTOO_PURPLE,
+		base_edge_color=GENTOO_PURPLE_GREY_A50,
+		)
+	package_name = cp.split("/")[1]
+	circular_depgraph(g,
+		save_as=f"~/{package_name}_mindeps.pdf"
+		)
+
+
+def dandi_mindeps():
+	g = seeded_graph(['/var/db/repos/gentoo'], ['dev-vcs/dandi-cli'],
+		highlight_overlays=["/home/chymera/src/sci"],
+		use_match="none",
+		seed_color=GENTOO_GREEN,
+		seed_text_color=GENTOO_GREEN,
+		seed_edge_color=GENTOO_GREEN_A75,
+		highlight_color=GENTOO_PURPLE_LIGHT2,
+		highlight_text_color=GENTOO_PURPLE,
+		highlight_edge_color=GENTOO_PURPLE_LIGHT2_A75,
+		base_color=GENTOO_PURPLE_GREY,
+		base_text_color=GENTOO_PURPLE,
+		base_edge_color=GENTOO_PURPLE_GREY_A50,
+		)
+	circular_depgraph(g,
+		save_as="~/dandi_mindeps.pdf"
+		)
+
 def gentoo_science():
-	g = repositories_graph(['/usr/local/portage/neurogentoo'],
+	#g = repositories_graph(['/var/db/repos/science/'],
+	g = repositories_graph(['/home/chymera/src/sci'],
 		overlay_colors=[GENTOO_PURPLE_LIGHT],
 		overlay_text_colors=[GENTOO_PURPLE],
 		overlay_edge_colors=[GENTOO_PURPLE_A50],
