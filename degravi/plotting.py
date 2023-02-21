@@ -13,9 +13,10 @@ def circular_depgraph(g,
 
 	save_as = os.path.abspath(os.path.expanduser(save_as))
 
-	state = gt.minimize_nested_blockmodel_dl(g, deg_corr=True)
+	state = gt.minimize_nested_blockmodel_dl(g)
 	t = gt.get_hierarchy_tree(state)[0]
-	tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices() - 1), weighted=True)
+	#tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices() -1), weighted=True)
+	tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices()/2), weighted=True)
 	cts = gt.get_hierarchy_control_points(g, t, tpos)
 	pos = g.own_property(tpos)
 
