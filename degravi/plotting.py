@@ -13,10 +13,9 @@ def circular_depgraph(g,
 
 	save_as = os.path.abspath(os.path.expanduser(save_as))
 
-	state = gt.minimize_nested_blockmodel_dl(g)
+	state = gt.minimize_nested_blockmodel_dl(g, state_args=dict(deg_corr=True))
 	t = gt.get_hierarchy_tree(state)[0]
-	#tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices() -1), weighted=True)
-	tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices()/2), weighted=True)
+	tpos = pos = gt.radial_tree_layout(t, t.vertex(t.num_vertices() -1, use_index=False), weighted=True)
 	cts = gt.get_hierarchy_control_points(g, t, tpos)
 	pos = g.own_property(tpos)
 
@@ -68,8 +67,8 @@ def circular_depgraph(g,
 		gt.draw_hierarchy(state,
 			vertex_text_position=1,
 			vertex_font_size=12,
-			vertex_text=g.vertex_properties['label'],
-			vertex_text_rotation=g.vertex_properties['text_rotation'],
+			#vertex_text=g.vertex_properties['label'],
+			#vertex_text_rotation=g.vertex_properties['text_rotation'],
 			vertex_anchor=0,
 			bg_color=[1,1,1,1],
 			output_size=[output_size,output_size],
