@@ -33,9 +33,15 @@ def circular_depgraph(g,
 			vtext_rotation[v] = math.pi + math.atan(pos[v][1]/pos[v][0])
 
 	#here we do black magic to get proper output size (controls vertex spacing) and scaling
+	#vertex_number = g.num_vertices()
+	#view_zoom = (vertex_number*36.0485)**(-10.068/vertex_number)+0.017037
+	#output_size = int(vertex_number*5.9+400)
 	vertex_number = g.num_vertices()
-	view_zoom = (vertex_number*36.0485)**(-10.068/vertex_number)+0.017037
-	output_size = int(vertex_number*5.9+400)
+	circumference = vertex_number * 16
+	fit_view = 0.8
+	ink_scale = math.pi*(fit_view**2)
+	ink_scale = 0.9
+	output_size = int(circumference/math.pi + 450)
 	dpi=300
 	if output_size >= 18000:
 		print("WARNING: You are exceding the maximal printable size - 150cm in one dimension at 300dpi")
@@ -61,7 +67,10 @@ def circular_depgraph(g,
 				bg_color=[1,1,1,1],
 				output_size=[output_size,output_size],
 				output=save_as,
-				fit_view=view_zoom,
+				fit_view=fit_view,
+				ink_scale=ink_scale,
+				#fit_view=True,
+				#fit_view_ink=True,
 				)
 	elif plot_type == "state":
 		gt.draw_hierarchy(state,
