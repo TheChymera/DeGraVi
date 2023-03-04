@@ -6,6 +6,7 @@ from matplotlib import transforms
 
 import graph_tool.all as gt
 
+
 def circular_depgraph(g,
 	plot_type="graph",
 	save_as="~/depgraph.png",

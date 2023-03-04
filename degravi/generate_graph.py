@@ -9,8 +9,8 @@ import numpy as np
 from matplotlib import cm
 from gentoolkit.package import Package
 
-from utils import get_cp_deps, vertex_and_edge_appearance, tree_iterator, add_vertex_and_edge, populate_from_repository
-from utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
+from .utils import get_cp_deps, vertex_and_edge_appearance, tree_iterator, add_vertex_and_edge, populate_from_repository
+from .utils import GENTOO_PURPLE, GENTOO_PURPLE_LIGHT, GENTOO_PURPLE_LIGHT2, GENTOO_PURPLE_GREY, GENTOO_GREEN
 
 def repositories_graph(overlay_paths,
 	overlay_colors=[GENTOO_PURPLE],
