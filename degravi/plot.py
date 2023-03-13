@@ -37,7 +37,12 @@ def package_deps(cp, save_as='/tmp/{package_name}_mindeps.pdf'):
 	run e.g. `python -c "import examples; examples.one_sci_package('dev-python/heudiconv')"` from the shell.
 
 	"""
-	g = seeded_graph(['/var/db/repos/gentoo'], [cp],
+	if isinstance(cp, str):
+		package_name = cp.split("/")[1]
+		cp = [cp]
+	else:
+		package_name = "PACKAGE_LIST"
+	g = seeded_graph(['/var/db/repos/gentoo'], cp,
 		highlight_overlays=["/home/chymera/src/sci"],
 		use_match="none",
 		seed_color=GENTOO_GREEN,
@@ -50,7 +55,6 @@ def package_deps(cp, save_as='/tmp/{package_name}_mindeps.pdf'):
 		base_text_color=GENTOO_PURPLE,
 		base_edge_color=GENTOO_PURPLE_GREY_A50,
 		)
-	package_name = cp.split("/")[1]
 	circular_depgraph(g,
 		save_as=save_as.format(package_name=package_name)
 		)
